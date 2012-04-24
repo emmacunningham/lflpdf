@@ -1,6 +1,9 @@
 import re
 import html2text
 
+import pdf.settings
+import os
+
 from xhtml2pdf import pisa, context, document
 from xhtml2pdf.context import pisaContext
 from xhtml2pdf.parser import pisaParser
@@ -27,7 +30,7 @@ linegrey = CMYKColor(0,0,0,0.3)
 numgrey = CMYKColor(0,0,0,0.6)
 
 # sets path for registerFont to find fonts in right place 
-reportlab.rl_config.TTFSearchPath.append("/Users/etc/reportlab-2.5/src/reportlab/fonts")
+reportlab.rl_config.TTFSearchPath.append( os.path.join(pdf.settings.STATIC_ROOT,'fonts') )
 
 # building fonts
 pdfmetrics.registerFont(TTFont('Akkurat-Reg','Akkurat_Reg.ttf'))
