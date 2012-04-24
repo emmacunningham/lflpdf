@@ -203,13 +203,14 @@ def addZero(num):
 
 
 def otherjunk(string,story):
-	m = re.compile('<div style="margin-left: (.*?)px; ">(.*?)</div>')
+	m = re.compile('(<div style="margin-left: .*?px; ">.*?</div>)')
 	parsedlist = m.split(string)
 	for a in parsedlist:
-		if m.match(a):
-			htext = m.group()
-			tabamt = m.group(1)
-			text = m.group(2)
+		n = re.match('<div style="margin-left: (.*?)px; ">(.*?)</div>',a)
+		if n:
+			htext = n.group()
+			tabamt = n.group(1)
+			text = n.group(2)
 			text = html2text.html2text(text)
 			t = tab('',text,int(tabamt)/2)
 			t.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
@@ -266,7 +267,6 @@ def printpdf(sow,sectionset):
 	
 	#rest of pages
 	Story.append(NextPageTemplate('Sections'))
-	Story.append(PageBreak())
 		
 	#main text content
 	sectionContent(Story,sectionset)
