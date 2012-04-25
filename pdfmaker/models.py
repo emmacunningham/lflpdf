@@ -23,8 +23,6 @@ class Sow(Sortable):
 	client = models.CharField(max_length=255)
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
-	phone = models.CharField(max_length=255,blank=True)
-
 	
 	def __unicode__(self):
 		return self.project
