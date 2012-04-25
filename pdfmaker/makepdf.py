@@ -124,7 +124,7 @@ def projectInfo(sow,story):
 	client = tab('CLIENT:',sow.client,83)
 	date = tab('DATE:',prettyDateTime(sow.pub_date),83)
 	author = tab('CONTACT:',authorname,83)
-	phone = tab('',sow.phone,83)
+	phone = tab('',authorphone,83)
 	project.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
