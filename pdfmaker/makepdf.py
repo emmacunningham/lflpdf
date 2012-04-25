@@ -179,7 +179,8 @@ def sectionContent(Story,sectionset):
 		sectioncontent = content.sectioncontent
 		
 		Story.append(sectionHeaders(sectionid,sectiontitle))
-		maincontent(sectioncontent,Story)
+		#maincontent(sectioncontent,Story)
+		junk(sectioncontent,Story)
 		i = i + 1
 
 
@@ -199,7 +200,70 @@ def addZero(num):
 	else:
 		sectionid = num	
 		return sectionid
+		
+def junk(string,story):
+	# temp replace html styling to non-html tags
+	string = string.replace('<br />','[br]')
+	string = string.replace('<b>','[b]')
+	string = string.replace('</b>','[/b]')
+	string = string.replace('<i>','[i]')
+	string = string.replace('</i>','[/i]')
+	string = string.replace('<u>','[u]')
+	string = string.replace('</u>','[/u]')
+	string = string.replace('<div style="margin-left: ','[indent')	
+	string = string.replace('px; ">','indent]')
+	string = string.replace('</div>','[/indent]')
+	
+	# strip away all html
+	string = html2text.html2text(string)
+	
+	# convert non-html tags to reportlab-friendly inline tags
+	string = string.replace('[br]','<br/>')
+	string = string.replace('[b]','<b>')
+	string = string.replace('[/b]','</b>')
+	string = string.replace('[i]','<i>')
+	string = string.replace('[/i]','</i>')
+	string = string.replace('[u]','<u>')
+	string = string.replace('[/u]','</u>')
 
+	# general non-html tag regex
+	bracketre = re.compile('(<.>)')
+	parsedbracketlist = bracketre.split(string)
+	bracketmatch = re.match(bracketre,string)
+
+	for text in parsedbracketlist:	
+		if bracketmatch:
+			p = Paragraph("brackets!",styles['Normal'])
+			story.append(p)
+		else:
+			p = Paragraph(text,styles['Normal'])
+			story.append(p)
+
+def signatures(story):
+	story.append(Spacer(width=612-mainTextMargin,height=100))
+	client = tab("Client","Date",150)
+	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+							('SIZE',(0,0),(1,0),9),
+							('TEXTCOLOR',(0,0),(1,0),numgrey),
+							('LINEABOVE',(0,0),(1,0),1,linegrey),
+							('BOTTOMPADDING',(0,0),(1,0),50),
+							('RIGHTPADDING',(1,0),(1,0),20),
+							('LEFTPADDING',(1,0),(1,0),20)]))
+
+	client._argW[1] = 150
+	
+	agency = tab("Agency","Date",150)
+	agency.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+							('SIZE',(0,0),(1,0),9),
+							('TEXTCOLOR',(0,0),(1,0),numgrey),
+							('LINEABOVE',(0,0),(1,0),1,linegrey),
+							('BOTTOMPADDING',(0,0),(1,0),15),
+							('RIGHTPADDING',(1,0),(1,0),20),
+							('LEFTPADDING',(1,0),(1,0),20)]))
+	agency._argW[1] = 150
+	story.append(client)
+	story.append(agency)
+	
 def maincontent(string,story):
 	match = re.compile('(.*?<div style="margin-left: .*?px; ">.*?</div>)')
 	match_obj = re.match(match,string)
@@ -209,10 +273,10 @@ def maincontent(string,story):
 		for m in re.finditer('(.*?)<div style="margin-left: (.*?)px; ">(.*?)</div>',string):
 			htext = m.group()
 			pretext = m.group(1)
-			pretext = html2text.html2text(pretext)
+			#pretext = html2text.html2text(pretext)
 			tabamt = m.group(2)
 			text = m.group(3)
-			text = html2text.html2text(text)
+			#text = html2text.html2text(text)
 			pre = Paragraph("<para spaceAfter=0 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(pretext),styles['Normal'])
 			t = tab('',text,int(tabamt)/2)
 			t.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
@@ -223,11 +287,11 @@ def maincontent(string,story):
 			story.append(pre)
 			story.append(t)
 		rest = p
-		rest = html2text.html2text(rest)
+		#rest = html2text.html2text(rest)
 		rtext = Paragraph("<para spaceAfter=0 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(rest),styles['Normal'])	
 		story.append(rtext)
 	else:
-		string = html2text.html2text(string)
+		#string = html2text.html2text(string)
 		story.append(Paragraph("<para spaceAfter=40 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(string),styles['Normal']))
 	
 def printpdf(sow,sectionset):
@@ -250,6 +314,8 @@ def printpdf(sow,sectionset):
 	#main text content
 	sectionContent(Story,sectionset)
 	
+	#signatures
+	signatures(Story)
 	
 	doc.build(Story)
 
