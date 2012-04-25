@@ -22,7 +22,9 @@ class Sow(Sortable):
 	project = models.CharField(max_length=255)
 	client = models.CharField(max_length=255)
 	pub_date = models.DateTimeField('date published')
-	author = models.ForeignKey(User)
+	author = models.ForeignKey(UserProfile)
+	phone = models.CharField(max_length=255,blank=True)
+
 	
 	def __unicode__(self):
 		return self.project
@@ -37,7 +39,7 @@ class Content(Sortable):
 	def __unicode__(self):
 		return self.sectiontitle
 
-class Assets(Sortable):
+class Assets(models.Model):
 	class Meta:
 		pass
 	sow = models.ForeignKey(Sow)

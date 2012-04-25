@@ -1,11 +1,13 @@
 from adminsortable.admin import SortableAdmin, SortableTabularInline
-from pdfmaker.models import Sow, Content, UserProfile
+from pdfmaker.models import Sow, Content, UserProfile, Assets
 from django.contrib import admin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import makepdf
 from django.contrib.auth.models import User
 
+class AssetsInline(admin.TabularInline):
+	model = Assets
 
 class ContentInline(SortableTabularInline):
 	model = Content

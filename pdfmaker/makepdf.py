@@ -15,6 +15,7 @@ from reportlab.lib.pagesizes import letter
 import reportlab.rl_config
 reportlab.rl_config.warnOnMissingFontGlyphs = 0
 from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.pdfmetrics import registerFontFamily
 from reportlab.pdfbase.ttfonts import TTFont
 
 from reportlab.lib.colors import grey, CMYKColor, PCMYKColor
@@ -38,6 +39,9 @@ pdfmetrics.registerFont(TTFont('Akkurat-Light','Akkurat_Light.ttf'))
 pdfmetrics.registerFont(TTFont('Akkurat-Bold','Akkurat-Bold.ttf'))
 pdfmetrics.registerFont(TTFont('Akkurat-Italic','Akkurat-Italic.ttf'))
 pdfmetrics.registerFont(TTFont('Gridnik','Gridnik.ttf'))
+
+registerFontFamily('Akkurat-Reg',normal='Akkurat-Reg',bold='Akkurat-Bold',italic='Akkurat-Italic')
+registerFontFamily('Akkurat-Light',normal='Akkurat-Light',bold='Akkurat-Bold',italic='Akkurat-Italic')
 
 # margin and padding definitions
 sectionLeft = 0 
@@ -113,12 +117,14 @@ def tab(left,right,tabamt):
 	return t
 	
 def projectInfo(sow,story):
-	statementofwork = Paragraph("<para spaceAfter=20><font face='Akkurat-Reg' size=16>// STATEMENT OF WORK<br/></font></para>",styles['Normal'])
+	authorname = '{} {}'.format(sow.author.user.first_name,sow.author.user.last_name)
+	authorphone = sow.author.phone
+	statementofwork = Paragraph("<para spaceAfter=20><font name='Akkurat-Reg' size=16>// STATEMENT OF WORK<br/></font></para>",styles['Normal'])
 	project = tab('PROJECT:',sow.project,83)
 	client = tab('CLIENT:',sow.client,83)
 	date = tab('DATE:',prettyDateTime(sow.pub_date),83)
-	author = tab('CONTACT:',sow.author,83)
-	#phone = tab('',sow.phone,83)
+	author = tab('CONTACT:',authorname,83)
+	phone = tab('',sow.phone,83)
 	project.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
@@ -131,15 +137,15 @@ def projectInfo(sow,story):
 	author.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
-	#phone.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
-	#						('SIZE',(0,0),(1,0),10),
-	#						('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
+	phone.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+							('SIZE',(0,0),(1,0),10),
+							('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
 	story.append(statementofwork)
 	story.append(project)
 	story.append(client)
 	story.append(date)
 	story.append(author)
-	#story.append(phone)
+	story.append(phone)
 	
 def buildIndex(sow,story):
 	index = tab('//','INDEX',22)
@@ -166,6 +172,7 @@ def sectionHeaders(sectionid,sectiontitle):
 							('TEXTCOLOR',(0,0),(0,0),numgrey),
 							('LINEBELOW',(0,0),(1,0),1,linegrey),
 							('BOTTOMPADDING',(0,0),(1,0),15),
+							('TOPPADDING',(0,0),(1,0),30),
 							('RIGHTPADDING',(0,0),(0,0),0)]))
 	sectionhead._argW[1] = 500
 	return sectionhead
@@ -227,16 +234,15 @@ def junk(string,story):
 	string = string.replace('[/u]','</u>')
 
 	# general non-html tag regex
-	bracketre = re.compile('(<.>)')
+	bracketre = re.compile('((.*?)<u>)')
 	parsedbracketlist = bracketre.split(string)
-	bracketmatch = re.match(bracketre,string)
-
+	bracketmatch = re.search(bracketre,string)
 	for text in parsedbracketlist:	
 		if bracketmatch:
 			p = Paragraph("brackets!",styles['Normal'])
 			story.append(p)
 		else:
-			p = Paragraph(text,styles['Normal'])
+			p = Paragraph(string,styles['Normal'])
 			story.append(p)
 
 def signatures(story):
@@ -277,7 +283,7 @@ def maincontent(string,story):
 			tabamt = m.group(2)
 			text = m.group(3)
 			#text = html2text.html2text(text)
-			pre = Paragraph("<para spaceAfter=0 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(pretext),styles['Normal'])
+			pre = Paragraph("<para spaceAfter=0 spaceBefore=10><font name='Akkurat-Light' size=9>{}</font></para>".format(pretext),styles['Normal'])
 			t = tab('',text,int(tabamt)/2)
 			t.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
 									('SIZE',(0,0),(1,0),9),
@@ -288,11 +294,11 @@ def maincontent(string,story):
 			story.append(t)
 		rest = p
 		#rest = html2text.html2text(rest)
-		rtext = Paragraph("<para spaceAfter=0 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(rest),styles['Normal'])	
+		rtext = Paragraph("<para spaceAfter=0 spaceBefore=10><font name='Akkurat-Light' size=9>{}</font></para>".format(rest),styles['Normal'])	
 		story.append(rtext)
 	else:
 		#string = html2text.html2text(string)
-		story.append(Paragraph("<para spaceAfter=40 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(string),styles['Normal']))
+		story.append(Paragraph("<para spaceAfter=40 spaceBefore=10><font name='Akkurat-Light' size=9>{}</font></para>".format(string),styles['Normal']))
 	
 def printpdf(sow,sectionset):
 	filename = "{}.pdf".format(sow.project)
