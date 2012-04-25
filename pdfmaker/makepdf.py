@@ -177,8 +177,7 @@ def sectionContent(Story,sectionset):
 		sectioncontent = content.sectioncontent
 		
 		Story.append(sectionHeaders(sectionid,sectiontitle))
-		otherjunk(sectioncontent,Story)
-		#marginparse(sectioncontent,Story)
+		maincontent(sectioncontent,Story)
 		i = i + 1
 
 
@@ -199,33 +198,11 @@ def addZero(num):
 		sectionid = num	
 		return sectionid
 
-
-
-
-def otherjunk(string,story):
-	m = re.compile('(<div style="margin-left: .*?px; ">.*?</div>)')
-	parsedlist = m.split(string)
-	for a in parsedlist:
-		n = re.match('<div style="margin-left: (.*?)px; ">(.*?)</div>',a)
-		if n:
-			htext = n.group()
-			tabamt = n.group(1)
-			text = n.group(2)
-			text = html2text.html2text(text)
-			t = tab('',text,int(tabamt)/2)
-			t.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
-									('SIZE',(0,0),(1,0),9),
-									('TOPPADDING',(0,0),(1,0),0),
-									('BOTTOMPADDING',(0,0),(1,0),0)]))
-			story.append(t)
-			
-		else:
-			string = html2text.html2text(string)
-			story.append(Paragraph("<para spaceAfter=40 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(string),styles['Normal']))
-
-
-def junk(string,story):
-	match_obj=re.match('(.*?)<div style="margin-left: (.*?)px; ">(.*?)</div>',string)
+def maincontent(string,story):
+	match = re.compile('(.*?<div style="margin-left: .*?px; ">.*?</div>)')
+	match_obj = re.match(match,string)
+	parsedlist = match.split(string)
+	p = parsedlist[-1]
 	if match_obj:
 		for m in re.finditer('(.*?)<div style="margin-left: (.*?)px; ">(.*?)</div>',string):
 			htext = m.group()
@@ -240,8 +217,13 @@ def junk(string,story):
 									('SIZE',(0,0),(1,0),9),
 									('TOPPADDING',(0,0),(1,0),0),
 									('BOTTOMPADDING',(0,0),(1,0),0)]))
+			
 			story.append(pre)
 			story.append(t)
+		rest = p
+		rest = html2text.html2text(rest)
+		rtext = Paragraph("<para spaceAfter=0 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(rest),styles['Normal'])	
+		story.append(rtext)
 	else:
 		string = html2text.html2text(string)
 		story.append(Paragraph("<para spaceAfter=40 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(string),styles['Normal']))
