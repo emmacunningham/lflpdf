@@ -35,6 +35,8 @@ reportlab.rl_config.TTFSearchPath.append( os.path.join(pdf.settings.STATIC_ROOT,
 # building fonts
 pdfmetrics.registerFont(TTFont('Akkurat-Reg','Akkurat_Reg.ttf'))
 pdfmetrics.registerFont(TTFont('Akkurat-Light','Akkurat_Light.ttf'))
+pdfmetrics.registerFont(TTFont('Akkurat-Bold','Akkurat-Bold.ttf'))
+pdfmetrics.registerFont(TTFont('Akkurat-Italic','Akkurat-Italic.ttf'))
 pdfmetrics.registerFont(TTFont('Gridnik','Gridnik.ttf'))
 
 # margin and padding definitions
@@ -228,11 +230,6 @@ def maincontent(string,story):
 		string = html2text.html2text(string)
 		story.append(Paragraph("<para spaceAfter=40 spaceBefore=10><font face='Akkurat-Light' size=9>{}</font></para>".format(string),styles['Normal']))
 	
-
-	
-
-
-
 def printpdf(sow,sectionset):
 	filename = "{}.pdf".format(sow.project)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=firstPage)
