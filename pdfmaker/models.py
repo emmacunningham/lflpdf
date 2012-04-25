@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
-	phone = models.CharField(max_length=255)
+	phone = models.CharField(max_length=255,blank=True)
 	
 	def __unicode__(self):
 		return self.user.username
