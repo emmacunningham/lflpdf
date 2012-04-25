@@ -36,6 +36,12 @@ class Content(Sortable):
 
 	def __unicode__(self):
 		return self.sectiontitle
-		
+
+class Assets(Sortable):
+	class Meta:
+		pass
+	sow = models.ForeignKey(Sow)
+	img = models.ImageField(upload_to='img/',blank=True)
+	name = models.CharField(max_length=255)
 
 
