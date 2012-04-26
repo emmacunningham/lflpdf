@@ -188,6 +188,7 @@ def sectionContent(Story,sectionset):
 		Story.append(sectionHeaders(sectionid,sectiontitle))
 		#maincontent(sectioncontent,Story)
 		junk(sectioncontent,Story)
+		p = Paragraph('<seq id="dummy"/>first,<seq id="dummy"/>second,<seq id="dummy"/>third,<seq id="dummy"/>fourth',styles['Normal'])
 		i = i + 1
 
 
@@ -210,6 +211,7 @@ def addZero(num):
 		
 def junk(string,story):
 	# temp replace html styling to non-html tags
+	string = string.replace('</li>','</li>[br]')
 	string = string.replace('<br />','[br]')
 	string = string.replace('<b>','[b]')
 	string = string.replace('</b>','[/b]')
@@ -217,9 +219,12 @@ def junk(string,story):
 	string = string.replace('</i>','[/i]')
 	string = string.replace('<u>','[u]')
 	string = string.replace('</u>','[/u]')
-	string = string.replace('<div style="margin-left: ','[indent')	
+	string = string.replace('<div style="margin-left:','[indent')	
 	string = string.replace('px; ">','indent]')
 	string = string.replace('</div>','[/indent]')
+	string = string.replace('<ol>','[indent 40indent]<ol>')
+	string = string.replace('</ol>','</ol>[/indent]')
+
 	
 	# strip away all html
 	string = html2text.html2text(string)
@@ -233,16 +238,21 @@ def junk(string,story):
 	string = string.replace('[u]','<u>')
 	string = string.replace('[/u]','</u>')
 
+	
 	# general non-html tag regex
-	bracketre = re.compile('((.*?)<u>)')
+	bracketre = re.compile('(\[indent .*?indent\].*?\[/indent\])',re.S)
 	parsedbracketlist = bracketre.split(string)
-	bracketmatch = re.search(bracketre,string)
-	for text in parsedbracketlist:	
-		if bracketmatch:
-			p = Paragraph("brackets!",styles['Normal'])
-			story.append(p)
+	for text in parsedbracketlist:
+		indentmatch = re.search('\[indent (.*?)indent\](.*?)\[/indent\]',text,re.S)
+		if indentmatch:
+			indentamt = indentmatch.group(1)
+			indenttext = indentmatch.group(2)
+			para = '<para leftIndent={}>{}</para>'.format(indentamt,indenttext)
+			p = Paragraph(para,styles['Normal'])
+			story.append(p)			
 		else:
-			p = Paragraph(string,styles['Normal'])
+			text = text.replace('[/indent]','')
+			p = Paragraph(text,styles['Normal'])
 			story.append(p)
 
 def signatures(story):
@@ -325,7 +335,8 @@ def printpdf(sow,sectionset):
 	
 	doc.build(Story)
 
+
 	
-
-
-
+	
+	
+		
