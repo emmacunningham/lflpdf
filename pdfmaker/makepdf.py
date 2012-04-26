@@ -1,8 +1,12 @@
 import re
 import html2text
+import datetime
+import time
 
 import pdf.settings
 import os
+
+from django.core.files import File
 
 from xhtml2pdf import pisa, context, document
 from xhtml2pdf.context import pisaContext
@@ -57,6 +61,9 @@ frameLaterPagesMain = Frame(x1=mainTextMargin,y1=0,width=612-mainTextMargin,heig
 frameFirstPageSide = Frame(x1=0,y1=0,width=mainTextMargin,height=792,topPadding=0,leftPadding=0)
 frameFirstPageMain = Frame(x1=mainTextMargin,y1=0,width=612-mainTextMargin,height=792,topPadding=218,leftPadding=20)
 
+
+
+
 def lfleft(canvas):
 	textobject = canvas.beginText()
 	textobject.setTextOrigin(51.2,749)
@@ -98,20 +105,25 @@ def contactleftLaterPages(canvas):
 	textobject.setTextOrigin(emailx,yy)
 	textobject.textLine('www.leftfieldlabs.com')
 	canvas.drawText(textobject)
-	
-def firstPage(canvas, doc):
-	canvas.saveState()
-	canvas.drawImage('http://some-antics.com/emma/appmedia/side.jpg',0,0,width=mainTextMargin-12,height=792)
-	lfleft(canvas)
-	contactleftFirstPage(canvas)
-	canvas.restoreState()
 
-def laterPages(canvas, doc):
-	canvas.saveState()
-	canvas.drawImage('http://some-antics.com/emma/appmedia/side.jpg',0,0,width=mainTextMargin-12,height=792)
-	contactleftLaterPages(canvas)
-	canvas.restoreState()
-
+def ffirstPage(sow):
+	img = sow.assets.img.name
+	def firstPage(canvas, doc):
+		canvas.saveState()
+		canvas.drawImage('media/{}'.format(img),0,0,width=mainTextMargin-12,height=792)
+		lfleft(canvas)
+		contactleftFirstPage(canvas)
+		canvas.restoreState()
+	return firstPage
+		
+def llaterPages(sow):
+	img = sow.assets.img.name
+	def laterPages(canvas, doc):
+		canvas.saveState()
+		canvas.drawImage('media/{}'.format(img),0,0,width=mainTextMargin-12,height=792)
+		contactleftLaterPages(canvas)
+		canvas.restoreState()
+	return laterPages
 	
 # hacked tabbing
 def tab(left,right,tabamt):
@@ -207,7 +219,13 @@ def prettyDateTime(datetime):
 	day = datetime.day
 	year = datetime.year
 	return "{} {}, {}".format(month, day, year)
-	
+
+def fileDateTime(datetime):
+	month = datetime.strftime('%B')
+	day = datetime.day
+	year = datetime.year
+	return "{}{}{}".format(month, day, year)
+
 
 def addZero(num):
 	if num < 10:
@@ -292,16 +310,19 @@ def signatures(story):
 	story.append(client)
 	story.append(agency)
 
+
 def printpdf(sow,sectionset):
-	filename = "media/pdf/{}.pdf".format(sow.project)
-	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=firstPage)
-	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=laterPages)
+	sideimg = sow.assets.img
+	versiondate = fileDateTime(datetime.datetime.today())
+	filename = "media/pdf/{}{}.pdf".format(sow.project,versiondate)
+	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
+	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=llaterPages(sow))
 	doc = BaseDocTemplate(filename.format(filename),pagesize=letter,pageTemplates=[pageOne,mainPages])
 	Story = []
 	c = canvas.Canvas(filename)
 	style = styles['Normal']
-	
 	#firstpage client details and index
+	c.drawImage("http://some-antics.com/emma/appmedia/side.jpg",0,0,width=mainTextMargin-12,height=792)
 	Story.append(FrameBreak())
 	projectInfo(sow,Story)
 	buildIndex(sow,Story)	
@@ -317,7 +338,9 @@ def printpdf(sow,sectionset):
 	
 	doc.build(Story)
 
-
+	f = open(filename)
+	pdf = File(f)
+	sow.pdf.save(filename,pdf,save=True)
 	
 	
 	

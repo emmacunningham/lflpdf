@@ -40,10 +40,9 @@ class Content(Sortable):
 		return self.sectiontitle
 
 class Assets(models.Model):
-	class Meta:
-		pass
-	sow = models.ForeignKey(Sow)
+
+	sow = models.OneToOneField(Sow)
 	img = models.FileField(upload_to='img/',blank=True)
-	name = models.CharField(max_length=255)
-
-
+	
+	def __unicode__(self):
+		return self.img.name

@@ -6,30 +6,34 @@ from reportlab.lib.pagesizes import letter
 import makepdf
 from django.contrib.auth.models import User
 
-class AssetsInline(admin.TabularInline):
+class AssetInline(admin.TabularInline):
 	model = Assets
+	extra = 0
 
 class ContentInline(SortableTabularInline):
 	model = Content
+	extra = 1
 
 class SowAdmin(SortableAdmin):
+	
 	fieldsets = [
 		(None, {'fields': ['author']}),
 		(None, {'fields': ['project']}),
 		(None, {'fields': ['client']}),
-		('Date published', {'fields': ['pub_date']})
+		('Date published', {'fields': ['pub_date']}),
 	]
-	list_display = ['project','client','pub_date','author']
+	list_display = ['project','client','pub_date','author','pdf']
 	list_filter = ['author','pub_date','project']
-	inlines = [ContentInline]
+	inlines = [AssetInline,ContentInline]
 	actions = ['publish_pdf']
 
-	
 	def publish_pdf(self,request,queryset):
 		for sow in queryset:
 			sectionset = sow.content_set.order_by('order')
+			img = sow.assets.img
 			makepdf.printpdf(sow,sectionset)
 	publish_pdf.short_description = "Publish as .pdf"
+	
 	
 class CommonMedia:
   js = (
