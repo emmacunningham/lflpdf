@@ -34,14 +34,14 @@ numgrey = CMYKColor(0,0,0,0.6)
 reportlab.rl_config.TTFSearchPath.append( os.path.join(pdf.settings.STATIC_ROOT,'fonts') )
 
 # building fonts
-pdfmetrics.registerFont(TTFont('Akkurat-Reg','Akkurat_Reg.ttf'))
-pdfmetrics.registerFont(TTFont('Akkurat-Light','Akkurat_Light.ttf'))
+pdfmetrics.registerFont(TTFont('Akkurat-Reg','Akkurat-Reg.ttf'))
+pdfmetrics.registerFont(TTFont('Akkurat-Light','Akkurat-Light.ttf'))
 pdfmetrics.registerFont(TTFont('Akkurat-Bold','Akkurat-Bold.ttf'))
 pdfmetrics.registerFont(TTFont('Akkurat-Italic','Akkurat-Italic.ttf'))
 pdfmetrics.registerFont(TTFont('Gridnik','Gridnik.ttf'))
 
 registerFontFamily('Akkurat-Reg',normal='Akkurat-Reg',bold='Akkurat-Bold',italic='Akkurat-Italic')
-registerFontFamily('Akkurat-Light',normal='Akkurat-Light',bold='Akkurat-Bold',italic='Akkurat-Italic')
+registerFontFamily('Akkurat',normal='Akkurat-Light',bold='Akkurat-Bold',italic='Akkurat-Italic')
 
 # margin and padding definitions
 sectionLeft = 0 
@@ -188,7 +188,6 @@ def sectionContent(Story,sectionset):
 		Story.append(sectionHeaders(sectionid,sectiontitle))
 		#maincontent(sectioncontent,Story)
 		junk(sectioncontent,Story)
-		p = Paragraph('<seq id="dummy"/>first,<seq id="dummy"/>second,<seq id="dummy"/>third,<seq id="dummy"/>fourth',styles['Normal'])
 		i = i + 1
 
 
@@ -279,37 +278,7 @@ def signatures(story):
 	agency._argW[1] = 150
 	story.append(client)
 	story.append(agency)
-	
-def maincontent(string,story):
-	match = re.compile('(.*?<div style="margin-left: .*?px; ">.*?</div>)')
-	match_obj = re.match(match,string)
-	parsedlist = match.split(string)
-	p = parsedlist[-1]
-	if match_obj:
-		for m in re.finditer('(.*?)<div style="margin-left: (.*?)px; ">(.*?)</div>',string):
-			htext = m.group()
-			pretext = m.group(1)
-			#pretext = html2text.html2text(pretext)
-			tabamt = m.group(2)
-			text = m.group(3)
-			#text = html2text.html2text(text)
-			pre = Paragraph("<para spaceAfter=0 spaceBefore=10><font name='Akkurat-Light' size=9>{}</font></para>".format(pretext),styles['Normal'])
-			t = tab('',text,int(tabamt)/2)
-			t.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
-									('SIZE',(0,0),(1,0),9),
-									('TOPPADDING',(0,0),(1,0),0),
-									('BOTTOMPADDING',(0,0),(1,0),0)]))
-			
-			story.append(pre)
-			story.append(t)
-		rest = p
-		#rest = html2text.html2text(rest)
-		rtext = Paragraph("<para spaceAfter=0 spaceBefore=10><font name='Akkurat-Light' size=9>{}</font></para>".format(rest),styles['Normal'])	
-		story.append(rtext)
-	else:
-		#string = html2text.html2text(string)
-		story.append(Paragraph("<para spaceAfter=40 spaceBefore=10><font name='Akkurat-Light' size=9>{}</font></para>".format(string),styles['Normal']))
-	
+
 def printpdf(sow,sectionset):
 	filename = "{}.pdf".format(sow.project)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=firstPage)
