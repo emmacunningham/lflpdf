@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from adminsortable.models import Sortable, SortableForeignKey
 from django.db.models.signals import post_save
 
+
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
 	phone = models.CharField(max_length=255,blank=True)
@@ -41,7 +42,7 @@ class Assets(models.Model):
 	class Meta:
 		pass
 	sow = models.ForeignKey(Sow)
-	img = models.ImageField(upload_to='img/',blank=True)
+	img = models.FileField(upload_to='img/',blank=True)
 	name = models.CharField(max_length=255)
 
 
