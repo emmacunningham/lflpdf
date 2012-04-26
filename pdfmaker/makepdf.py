@@ -293,7 +293,7 @@ def signatures(story):
 	story.append(agency)
 
 def printpdf(sow,sectionset):
-	filename = "{}.pdf".format(sow.project)
+	filename = "media/pdf/{}.pdf".format(sow.project)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=firstPage)
 	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=laterPages)
 	doc = BaseDocTemplate(filename.format(filename),pagesize=letter,pageTemplates=[pageOne,mainPages])
