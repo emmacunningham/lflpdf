@@ -35,13 +35,13 @@ reportlab.rl_config.TTFSearchPath.append( os.path.join(pdf.settings.STATIC_ROOT,
 
 # building fonts
 pdfmetrics.registerFont(TTFont('Akkurat-Reg','Akkurat-Reg.ttf'))
-pdfmetrics.registerFont(TTFont('Akkurat-Light','Akkurat-Light.ttf'))
-pdfmetrics.registerFont(TTFont('Akkurat-Bold','Akkurat-Bold.ttf'))
-pdfmetrics.registerFont(TTFont('Akkurat-Italic','Akkurat-Italic.ttf'))
+pdfmetrics.registerFont(TTFont('Akkurat','Akkurat-Light.ttf'))
+pdfmetrics.registerFont(TTFont('AkkuratBd','Akkurat-Bold.ttf'))
+pdfmetrics.registerFont(TTFont('AkkuratIt','Akkurat-Italic.ttf'))
 pdfmetrics.registerFont(TTFont('Gridnik','Gridnik.ttf'))
 
 registerFontFamily('Akkurat-Reg',normal='Akkurat-Reg',bold='Akkurat-Bold',italic='Akkurat-Italic')
-registerFontFamily('Akkurat',normal='Akkurat-Light',bold='Akkurat-Bold',italic='Akkurat-Italic')
+registerFontFamily('Akkurat',normal='Akkurat',bold='AkkuratBd',italic='AkkuratIt')
 
 # margin and padding definitions
 sectionLeft = 0 
@@ -52,10 +52,10 @@ sectionBottom = 36
 mainTextMargin = 190
 
 # frames
-frameLaterPagesSide = Frame(x1=0,y1=0,width=mainTextMargin,height=792,topPadding=39.4,bottomPadding=36,rightPadding=0)
-frameLaterPagesMain = Frame(x1=mainTextMargin,y1=0,width=612-mainTextMargin,height=792,topPadding=39.4,bottomPadding=36,rightPadding=24)
+
+frameLaterPagesMain = Frame(x1=mainTextMargin,y1=0,width=612-mainTextMargin,height=792,topPadding=39.4,bottomPadding=36,rightPadding=24,leftPadding=20)
 frameFirstPageSide = Frame(x1=0,y1=0,width=mainTextMargin,height=792,topPadding=0,leftPadding=0)
-frameFirstPageMain = Frame(x1=mainTextMargin,y1=0,width=612-mainTextMargin,height=792,topPadding=218,leftPadding=0)
+frameFirstPageMain = Frame(x1=mainTextMargin,y1=0,width=612-mainTextMargin,height=792,topPadding=218,leftPadding=20)
 
 def lfleft(canvas):
 	textobject = canvas.beginText()
@@ -71,7 +71,7 @@ def lfleft(canvas):
 def contactleftFirstPage(canvas):
 	textobject = canvas.beginText()
 	textobject.setTextOrigin(51.2,57)
-	textobject.setFont('Akkurat-Light',9)
+	textobject.setFont('Akkurat',9)
 	textobject.textLines('''
 	510 Victoria Ave
 	Venice CA 90291
@@ -81,13 +81,22 @@ def contactleftFirstPage(canvas):
 
 def contactleftLaterPages(canvas):
 	textobject = canvas.beginText()
-	textobject.setTextOrigin(51.2,57)
-	textobject.setFont('Akkurat-Light',9)
-	textobject.textLines('''
-	510 Victoria Ave
-	Venice CA 90291
-	www.leftfieldlabs.com
-	''')
+	lflwidth = canvas.stringWidth('LEFT FIELD LABS','Gridnik',12)
+	addrwidth = canvas.stringWidth('510 Victoria Ave, Venice CA 90291','Akkurat',9)
+	emailwidth = canvas.stringWidth('www.leftfieldlabs.com','Akkurat',9)
+	lflx = addrwidth - lflwidth + 30
+	emailx = addrwidth - emailwidth + 30
+	textobject.setTextOrigin(lflx,57)
+	textobject.setFont('Gridnik',12)
+	textobject.textLine('LEFT FIELD LABS')
+	y = textobject.getY()
+	textobject.setTextOrigin(30,y)
+	
+	textobject.setFont('Akkurat',9)
+	textobject.textLine('510 Victoria Ave, Venice CA 90291')
+	yy = textobject.getY()
+	textobject.setTextOrigin(emailx,yy)
+	textobject.textLine('www.leftfieldlabs.com')
 	canvas.drawText(textobject)
 	
 def firstPage(canvas, doc):
@@ -125,19 +134,19 @@ def projectInfo(sow,story):
 	date = tab('DATE:',prettyDateTime(sow.pub_date),83)
 	author = tab('CONTACT:',authorname,83)
 	phone = tab('',authorphone,83)
-	project.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+	project.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
-	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
-	date.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+	date.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
-	author.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+	author.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
-	phone.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+	phone.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),10),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
 	story.append(statementofwork)
@@ -159,7 +168,7 @@ def buildIndex(sow,story):
 		sectionid = addZero(i)
 		sectiontitle = content.sectiontitle
 		section_print = tab('{}'.format(sectionid),'{}'.format(sectiontitle),22)	
-		section_print.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+		section_print.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 								('SIZE',(0,0),(1,0),10),
 								('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 		story.append(section_print)
@@ -172,7 +181,7 @@ def sectionHeaders(sectionid,sectiontitle):
 							('TEXTCOLOR',(0,0),(0,0),numgrey),
 							('LINEBELOW',(0,0),(1,0),1,linegrey),
 							('BOTTOMPADDING',(0,0),(1,0),15),
-							('TOPPADDING',(0,0),(1,0),30),
+							('TOPPADDING',(0,0),(1,0),0),
 							('RIGHTPADDING',(0,0),(0,0),0)]))
 	sectionhead._argW[1] = 500
 	return sectionhead
@@ -188,6 +197,7 @@ def sectionContent(Story,sectionset):
 		Story.append(sectionHeaders(sectionid,sectiontitle))
 		#maincontent(sectioncontent,Story)
 		junk(sectioncontent,Story)
+		Story.append(Spacer(width=612-mainTextMargin,height=30))
 		i = i + 1
 
 
@@ -221,8 +231,8 @@ def junk(string,story):
 	string = string.replace('<div style="margin-left:','[indent')	
 	string = string.replace('px; ">','indent]')
 	string = string.replace('</div>','[/indent]')
-	string = string.replace('<ol>','[indent 40indent]<ol>')
-	string = string.replace('</ol>','</ol>[/indent]')
+	#string = string.replace('<ol>','[indent 40indent]<ol>')
+	#string = string.replace('</ol>','</ol>[/indent]')
 
 	
 	# strip away all html
@@ -241,23 +251,26 @@ def junk(string,story):
 	# general non-html tag regex
 	bracketre = re.compile('(\[indent .*?indent\].*?\[/indent\])',re.S)
 	parsedbracketlist = bracketre.split(string)
+	story.append(Spacer(width=612-mainTextMargin,height=10))
 	for text in parsedbracketlist:
 		indentmatch = re.search('\[indent (.*?)indent\](.*?)\[/indent\]',text,re.S)
 		if indentmatch:
 			indentamt = indentmatch.group(1)
 			indenttext = indentmatch.group(2)
-			para = '<para leftIndent={}>{}</para>'.format(indentamt,indenttext)
+			para = '<para leftIndent={} fontName="Akkurat" fontSize=9>{}</para>'.format(indentamt,indenttext)
 			p = Paragraph(para,styles['Normal'])
 			story.append(p)			
 		else:
 			text = text.replace('[/indent]','')
-			p = Paragraph(text,styles['Normal'])
+			styles = getSampleStyleSheet()
+			styles.add(ParagraphStyle(name='Akkuratfonts',fontName='Akkurat',fontSize=9))
+			p = Paragraph(text,styles['Akkuratfonts'])
 			story.append(p)
 
 def signatures(story):
 	story.append(Spacer(width=612-mainTextMargin,height=100))
 	client = tab("Client","Date",150)
-	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),9),
 							('TEXTCOLOR',(0,0),(1,0),numgrey),
 							('LINEABOVE',(0,0),(1,0),1,linegrey),
@@ -268,7 +281,7 @@ def signatures(story):
 	client._argW[1] = 150
 	
 	agency = tab("Agency","Date",150)
-	agency.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Light'),
+	agency.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),9),
 							('TEXTCOLOR',(0,0),(1,0),numgrey),
 							('LINEABOVE',(0,0),(1,0),1,linegrey),
