@@ -24,6 +24,7 @@ class Sow(Sortable):
 	client = models.CharField(max_length=255)
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
+	pdf = models.FileField(upload_to='pdf/',blank=True,null=True)
 	
 	def __unicode__(self):
 		return self.project
