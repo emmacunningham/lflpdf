@@ -17,6 +17,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 		
 post_save.connect(create_user_profile, sender=User)
 
+
+class Assets(models.Model):
+	img = models.FileField(upload_to='img/',blank=True,null=True)
+	
+	def __unicode__(self):
+		return self.img.name
+
+
 class Sow(Sortable):
 	class Meta:
 		pass
@@ -25,6 +33,7 @@ class Sow(Sortable):
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
 	pdf = models.FileField(upload_to='pdf',blank=True,null=True)
+	img = models.ForeignKey(Assets,blank=True,null=True,default=3)
 		
 	def __unicode__(self):
 		return self.project
@@ -38,11 +47,3 @@ class Content(Sortable):
 
 	def __unicode__(self):
 		return self.sectiontitle
-
-class Assets(models.Model):
-
-	sow = models.OneToOneField(Sow)
-	img = models.FileField(upload_to='img/',blank=True,null=True)
-	
-	def __unicode__(self):
-		return self.img.name

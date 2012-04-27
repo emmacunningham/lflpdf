@@ -3,37 +3,31 @@ from pdfmaker.models import Sow, Content, UserProfile, Assets
 from django.contrib import admin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-import makepdf
+import makesow
 from django.contrib.auth.models import User
 from django.core.files import File
-
-class AssetInline(admin.TabularInline):
-	model = Assets
-	extra = 0
 
 class ContentInline(SortableTabularInline):
 	model = Content
 	extra = 2
 
 class SowAdmin(SortableAdmin):
-
-	
 	fieldsets = [
 		(None, {'fields': ['author']}),
 		(None, {'fields': ['project']}),
 		(None, {'fields': ['client']}),
 		('Date published', {'fields': ['pub_date']}),
+		('Side image', {'fields': ['img']})
 	]
 	list_display = ('project','client','pub_date','author','show_pdf_url')
 	list_filter = ['author','pub_date','project']
-	inlines = [AssetInline,ContentInline]
+	inlines = [ContentInline]
 	actions = ['publish_pdf']
 
 	def publish_pdf(self,request,queryset):
 		for sow in queryset:
 			sectionset = sow.content_set.order_by('order')
-			img = sow.assets.img
-			makepdf.printpdf(sow,sectionset)
+			makesow.printpdf(sow,sectionset)
 	publish_pdf.short_description = "Publish as .pdf"
 	
 	def show_pdf_url(self,obj):
@@ -43,6 +37,8 @@ class SowAdmin(SortableAdmin):
 			return 'no published pdf yet'
 	show_pdf_url.allow_tags = True
 	
+class AssetAdmin(admin.ModelAdmin):
+	fieldsets = [('Upload an image',{'fields':['img']})]
 	
 class CommonMedia:
   js = (
