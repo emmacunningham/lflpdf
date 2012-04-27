@@ -215,7 +215,7 @@ def sectionContent(Story,sectionset):
 		sectioncontent = content.sectioncontent
 		
 		Story.append(sectionHeaders(sectionid,sectiontitle))
-		formatesectioncontent(sectioncontent,Story)
+		formatsectioncontent(sectioncontent,Story)
 		Story.append(Spacer(width=612-mainTextMargin,height=30))
 		i = i + 1
 
@@ -320,7 +320,7 @@ def signatures(story):
 
 def printpdf(sow,sectionset):
 	versiondate = fileDateTime(datetime.datetime.today())
-	filename = "media/pdf/{}{}.pdf".format(sow.project,versiondate)
+	filename = "media/pdf/{}.pdf".format(sow.project)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
 	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=llaterPages(sow))
 	doc = BaseDocTemplate(filename.format(filename),pagesize=letter,pageTemplates=[pageOne,mainPages])
