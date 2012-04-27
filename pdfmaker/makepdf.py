@@ -7,6 +7,8 @@ import pdf.settings
 import os
 
 from django.core.files import File
+from django.core.files.storage import FileSystemStorage, default_storage
+
 
 from xhtml2pdf import pisa, context, document
 from xhtml2pdf.context import pisaContext
@@ -231,7 +233,7 @@ def fileDateTime(datetime):
 	month = datetime.strftime('%B')
 	day = datetime.day
 	year = datetime.year
-	return "{}{}{}".format(month, day, year)
+	return "{}_{}_{}".format(month, day, year)
 
 
 def addZero(num):
@@ -320,7 +322,7 @@ def signatures(story):
 
 def printpdf(sow,sectionset):
 	versiondate = fileDateTime(datetime.datetime.today())
-	filename = "media/pdf/{}.pdf".format(sow.project)
+	filename = "media/pdf/{}_{}.pdf".format(sow.project,versiondate)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
 	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=llaterPages(sow))
 	doc = BaseDocTemplate(filename.format(filename),pagesize=letter,pageTemplates=[pageOne,mainPages])
@@ -346,10 +348,7 @@ def printpdf(sow,sectionset):
 
 	f = open(filename)
 	pdf = File(f)
-	sow.pdf = pdf
 	sow.pdf.filename = filename
+	sow.pdf = pdf
 	sow.save()
-	
-	
-	
 		

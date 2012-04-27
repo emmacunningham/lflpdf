@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from adminsortable.models import Sortable, SortableForeignKey
 from django.db.models.signals import post_save
-from django.core.files import File
 
 
 class UserProfile(models.Model):
@@ -26,12 +25,6 @@ class Sow(Sortable):
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
 	pdf = models.FileField(upload_to='pdf',blank=True,null=True)
-	
-	def pdflink(self):
-		if self.pdf.name == '':
-			return 'no file saved yet'
-		else:
-			return self.pdf.name			
 		
 	def __unicode__(self):
 		return self.project
