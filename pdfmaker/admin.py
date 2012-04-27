@@ -16,6 +16,7 @@ class ContentInline(SortableTabularInline):
 	extra = 2
 
 class SowAdmin(SortableAdmin):
+
 	
 	fieldsets = [
 		(None, {'fields': ['author']}),
@@ -23,7 +24,7 @@ class SowAdmin(SortableAdmin):
 		(None, {'fields': ['client']}),
 		('Date published', {'fields': ['pub_date']}),
 	]
-	list_display = ('project','client','pub_date','author','pdflink')
+	list_display = ('project','client','pub_date','author','show_pdf_url')
 	list_filter = ['author','pub_date','project']
 	inlines = [AssetInline,ContentInline]
 	actions = ['publish_pdf']
@@ -34,6 +35,11 @@ class SowAdmin(SortableAdmin):
 			img = sow.assets.img
 			makepdf.printpdf(sow,sectionset)
 	publish_pdf.short_description = "Publish as .pdf"
+	
+	def show_pdf_url(self,obj):
+		name = obj.pdflink()
+		return '<a href="/media/{}">{}</a>'.format(name,name)
+	show_pdf_url.allow_tags = True
 	
 	
 class CommonMedia:

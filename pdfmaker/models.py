@@ -31,12 +31,7 @@ class Sow(Sortable):
 		if self.pdf.name == '':
 			return 'no file saved yet'
 		else:
-			filename = self.pdf.name			
-			s = [ ]
-			s.append('pdf/media/')
-			s.append(filename)
-			url = ''.join(s)
-			return url
+			return self.pdf.name			
 		
 	def __unicode__(self):
 		return self.project
