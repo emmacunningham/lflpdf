@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table('pdfmaker_userprofile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('phone', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('phone', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
         ))
         db.send_create_signal('pdfmaker', ['UserProfile'])
 
@@ -23,8 +23,8 @@ class Migration(SchemaMigration):
             ('project', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('client', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('pub_date', self.gf('django.db.models.fields.DateTimeField')()),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('phone', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['pdfmaker.UserProfile'])),
+            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['pdfmaker.UserProfile'])),
+            ('pdf', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
         ))
         db.send_create_signal('pdfmaker', ['Sow'])
 
@@ -38,6 +38,14 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('pdfmaker', ['Content'])
 
+        # Adding model 'Assets'
+        db.create_table('pdfmaker_assets', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('sow', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['pdfmaker.Sow'], unique=True)),
+            ('img', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+        ))
+        db.send_create_signal('pdfmaker', ['Assets'])
+
     def backwards(self, orm):
         # Deleting model 'UserProfile'
         db.delete_table('pdfmaker_userprofile')
@@ -47,6 +55,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Content'
         db.delete_table('pdfmaker_content')
+
+        # Deleting model 'Assets'
+        db.delete_table('pdfmaker_assets')
 
     models = {
         'auth.group': {
@@ -85,6 +96,12 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'pdfmaker.assets': {
+            'Meta': {'object_name': 'Assets'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'img': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'sow': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['pdfmaker.Sow']", 'unique': 'True'})
+        },
         'pdfmaker.content': {
             'Meta': {'ordering': "['order']", 'object_name': 'Content'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -95,18 +112,18 @@ class Migration(SchemaMigration):
         },
         'pdfmaker.sow': {
             'Meta': {'object_name': 'Sow'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['pdfmaker.UserProfile']"}),
             'client': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
-            'phone': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['pdfmaker.UserProfile']"}),
+            'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'project': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'pub_date': ('django.db.models.fields.DateTimeField', [], {})
         },
         'pdfmaker.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'phone': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         }
     }

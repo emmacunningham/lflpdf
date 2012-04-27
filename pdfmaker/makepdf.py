@@ -312,7 +312,6 @@ def signatures(story):
 
 
 def printpdf(sow,sectionset):
-	sideimg = sow.assets.img
 	versiondate = fileDateTime(datetime.datetime.today())
 	filename = "media/pdf/{}{}.pdf".format(sow.project,versiondate)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
@@ -340,7 +339,9 @@ def printpdf(sow,sectionset):
 
 	f = open(filename)
 	pdf = File(f)
-	sow.pdf.save(filename,pdf,save=True)
+	sow.pdf = pdf
+	sow.pdf.filename = filename
+	sow.save()
 	
 	
 	

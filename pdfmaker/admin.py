@@ -5,6 +5,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import makepdf
 from django.contrib.auth.models import User
+from django.core.files import File
 
 class AssetInline(admin.TabularInline):
 	model = Assets
@@ -12,7 +13,7 @@ class AssetInline(admin.TabularInline):
 
 class ContentInline(SortableTabularInline):
 	model = Content
-	extra = 1
+	extra = 2
 
 class SowAdmin(SortableAdmin):
 	
@@ -22,7 +23,7 @@ class SowAdmin(SortableAdmin):
 		(None, {'fields': ['client']}),
 		('Date published', {'fields': ['pub_date']}),
 	]
-	list_display = ['project','client','pub_date','author','pdf']
+	list_display = ('project','client','pub_date','author','pdflink')
 	list_filter = ['author','pub_date','project']
 	inlines = [AssetInline,ContentInline]
 	actions = ['publish_pdf']

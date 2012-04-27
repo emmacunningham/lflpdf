@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from adminsortable.models import Sortable, SortableForeignKey
 from django.db.models.signals import post_save
+from django.core.files import File
 
 
 class UserProfile(models.Model):
@@ -24,8 +25,19 @@ class Sow(Sortable):
 	client = models.CharField(max_length=255)
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
-	pdf = models.FileField(upload_to='pdf/',blank=True,null=True)
+	pdf = models.FileField(upload_to='pdf',blank=True,null=True)
 	
+	def pdflink(self):
+		if self.pdf.name == '':
+			return 'no file saved yet'
+		else:
+			filename = self.pdf.name			
+			s = [ ]
+			s.append('pdf/media/')
+			s.append(filename)
+			url = ''.join(s)
+			return url
+		
 	def __unicode__(self):
 		return self.project
 
@@ -42,7 +54,7 @@ class Content(Sortable):
 class Assets(models.Model):
 
 	sow = models.OneToOneField(Sow)
-	img = models.FileField(upload_to='img/',blank=True)
+	img = models.FileField(upload_to='img/',blank=True,null=True)
 	
 	def __unicode__(self):
 		return self.img.name
