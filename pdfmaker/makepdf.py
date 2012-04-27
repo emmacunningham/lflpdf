@@ -79,14 +79,17 @@ def lfleft(canvas):
 	
 def contactleftFirstPage(canvas):
 	textobject = canvas.beginText()
-	textobject.setTextOrigin(51.2,57)
+	addrwidth = canvas.stringWidth('510 Victoria Ave, Venice CA 90291','Akkurat',9)
+	emailwidth = canvas.stringWidth('www.leftfieldlabs.com','Akkurat',9)
+	emailx = addrwidth - emailwidth + 30
+	textobject.setTextOrigin(30,57)	
 	textobject.setFont('Akkurat',9)
-	textobject.textLines('''
-	510 Victoria Ave
-	Venice CA 90291
-	www.leftfieldlabs.com
-	''')
+	textobject.textLine('510 Victoria Ave, Venice CA 90291')
+	yy = textobject.getY()
+	textobject.setTextOrigin(emailx,yy)
+	textobject.textLine('www.leftfieldlabs.com')
 	canvas.drawText(textobject)
+
 
 def contactleftLaterPages(canvas):
 	textobject = canvas.beginText()
@@ -100,7 +103,6 @@ def contactleftLaterPages(canvas):
 	textobject.textLine('LEFT FIELD LABS')
 	y = textobject.getY()
 	textobject.setTextOrigin(30,y)
-	
 	textobject.setFont('Akkurat',9)
 	textobject.textLine('510 Victoria Ave, Venice CA 90291')
 	yy = textobject.getY()
@@ -124,7 +126,8 @@ def ffirstPage(sow):
 	return firstPage
 		
 def llaterPages(sow):
-	img = sow.assets.img.name
+	img = sow.assets.img
+	imgname = img.name	
 	def laterPages(canvas, doc):
 		canvas.saveState()
 		if img:
