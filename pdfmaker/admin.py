@@ -37,8 +37,10 @@ class SowAdmin(SortableAdmin):
 	publish_pdf.short_description = "Publish as .pdf"
 	
 	def show_pdf_url(self,obj):
-		name = obj.pdflink()
-		return '<a href="/media/{}">{}</a>'.format(name,name)
+		if obj.pdf:
+			return '<a href="{}">{}</a>'.format(obj.pdf.url,obj.pdf.url)
+		else:
+			return 'no published pdf yet'
 	show_pdf_url.allow_tags = True
 	
 	
