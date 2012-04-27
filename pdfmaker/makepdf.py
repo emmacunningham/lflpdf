@@ -107,10 +107,15 @@ def contactleftLaterPages(canvas):
 	canvas.drawText(textobject)
 
 def ffirstPage(sow):
-	img = sow.assets.img.name
+	img = sow.assets.img
+	imgname = img.name
 	def firstPage(canvas, doc):
 		canvas.saveState()
-		canvas.drawImage('media/{}'.format(img),0,0,width=mainTextMargin-12,height=792)
+		if img:
+			canvas.drawImage('media/{}'.format(imgname),0,0,width=mainTextMargin-12,height=792)
+		else:
+			canvas.drawImage('media/img/default.jpg',0,0,width=mainTextMargin-12,height=792)
+			
 		lfleft(canvas)
 		contactleftFirstPage(canvas)
 		canvas.restoreState()
@@ -120,7 +125,10 @@ def llaterPages(sow):
 	img = sow.assets.img.name
 	def laterPages(canvas, doc):
 		canvas.saveState()
-		canvas.drawImage('media/{}'.format(img),0,0,width=mainTextMargin-12,height=792)
+		if img:
+			canvas.drawImage('media/{}'.format(imgname),0,0,width=mainTextMargin-12,height=792)
+		else:
+			canvas.drawImage('media/img/default.jpg',0,0,width=mainTextMargin-12,height=792)
 		contactleftLaterPages(canvas)
 		canvas.restoreState()
 	return laterPages
