@@ -215,8 +215,7 @@ def sectionContent(Story,sectionset):
 		sectioncontent = content.sectioncontent
 		
 		Story.append(sectionHeaders(sectionid,sectiontitle))
-		#maincontent(sectioncontent,Story)
-		junk(sectioncontent,Story)
+		formatesectioncontent(sectioncontent,Story)
 		Story.append(Spacer(width=612-mainTextMargin,height=30))
 		i = i + 1
 
@@ -244,7 +243,7 @@ def addZero(num):
 		sectionid = num	
 		return sectionid
 		
-def junk(string,story):
+def formatsectioncontent(string,story):
 	# temp replace html styling to non-html tags
 	string = string.replace('</li>','</li>[br]')
 	string = string.replace('<br />','[br]')
