@@ -254,7 +254,6 @@ def addZero(num):
 		
 def formatsectioncontent(string,story):
 	# temp replace html styling to non-html tags
-	string = string.replace('</li>','</li>[br]')
 	string = string.replace('<br />','[br]')
 	string = string.replace('<b>','[b]')
 	string = string.replace('</b>','[/b]')
@@ -262,12 +261,26 @@ def formatsectioncontent(string,story):
 	string = string.replace('</i>','[/i]')
 	string = string.replace('<u>','[u]')
 	string = string.replace('</u>','[/u]')
+	
+	string = string.replace('<ul style="padding-top: 0px; padding-bottom: 0px; ">','[ul]')
+	string = string.replace('<ul>','[ul]')
+	string = string.replace('</ul>','[/ul]')
+	
+	def lidash(matchobj):
+		s = matchobj.group()
+		s = s.replace('<li>','-')
+		s = s.replace('</li>','[br]')
+		return s
+		
+	string = re.sub('\[ul\].*?(<li>)(.*?)</li>.*?\[/ul\]',lidash,string)
+	
+	string = string.replace('[ul]','[br]')
+	string = string.replace('[/ul]','')
+	string = string.replace('</li>','</li>[br]')
+	
 	string = string.replace('<div style="margin-left:','[indent')	
 	string = string.replace('px; ">','indent]')
 	string = string.replace('</div>','[/indent]')
-	#string = string.replace('<ol>','[indent 40indent]<ol>')
-	#string = string.replace('</ol>','</ol>[/indent]')
-
 	
 	# strip away all html
 	string = html2text.html2text(string)

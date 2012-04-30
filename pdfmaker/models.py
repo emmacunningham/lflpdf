@@ -33,7 +33,7 @@ class Sow(Sortable):
 	client = models.CharField(max_length=255)
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
-	pdf = models.FileField(upload_to='pdf',blank=True,null=True)
+	pdf = models.FileField(upload_to='pdf/sow',blank=True,null=True)
 	img = models.ForeignKey(Assets,blank=True,null=True,default=3)
 		
 	def __unicode__(self):
@@ -48,3 +48,28 @@ class Content(Sortable):
 
 	def __unicode__(self):
 		return self.sectiontitle
+
+class Timeline(Sortable):
+	class Meta:
+		pass
+	project = models.CharField(max_length=255)
+	client = models.CharField(max_length=255)
+	pub_date = models.DateTimeField('date published')
+	author = models.ForeignKey(UserProfile)
+	pdf = models.FileField(upload_to='pdf/timeline',blank=True,null=True)
+	
+	def __unicode__(self):
+		return self.project
+		
+class Milestones(Sortable):
+	class Meta:
+		pass
+	timeline = models.ForeignKey(Timeline)
+	description = models.CharField(max_length=255)
+	milestone_date = models.DateField('milestone date')
+	
+	def __unicode__(self):
+		return self.description
+	
+
+	

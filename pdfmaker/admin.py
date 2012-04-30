@@ -1,16 +1,17 @@
 from adminsortable.admin import SortableAdmin, SortableTabularInline
-from pdfmaker.models import Sow, Content, UserProfile, Assets
+from pdfmaker.models import Sow, Content, UserProfile, Assets, Timeline, Milestones
 from django.contrib import admin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import makesow
+import maketimeline
 from django.contrib.auth.models import User
 from django.core.files import File
 
 class ContentInline(SortableTabularInline):
 	model = Content
 	extra = 2
-
+	
 class SowAdmin(SortableAdmin):
 	fieldsets = [
 		(None, {'fields': ['author']}),
@@ -21,7 +22,7 @@ class SowAdmin(SortableAdmin):
 	]
 	list_display = ('project','client','pub_date','author','show_pdf_url')
 	list_filter = ['author','pub_date','project']
-	inlines = [ContentInline]
+	inlines = [AssetInline,ContentInline]
 	actions = ['publish_pdf']
 
 	def publish_pdf(self,request,queryset):
@@ -33,6 +34,29 @@ class SowAdmin(SortableAdmin):
 	def show_pdf_url(self,obj):
 		if obj.pdf:
 			return '<a href="{0}">{1}</a>'.format(obj.pdf.url,obj.pdf.url)
+		else:
+			return 'no published pdf yet'
+	show_pdf_url.allow_tags = True
+	
+class MilestoneInline(SortableTabularInline):
+	model = Milestones
+	extra = 2
+
+class TimelineAdmin(admin.ModelAdmin):
+	list_display = ('project','client','pub_date','author','show_pdf_url')
+	list_filter = ['author','pub_date','project']
+	inlines = [MilestoneInline]
+	actions = ['publish_pdf']
+
+	def publish_pdf(self,request,queryset):
+		for sow in queryset:
+			sectionset = sow.content_set.order_by('order')
+			maketimeline.printpdf(sow,sectionset)
+	publish_pdf.short_description = "Publish as .pdf"
+	
+	def show_pdf_url(self,obj):
+		if obj.pdf:
+			return '<a href="{}">{}</a>'.format(obj.pdf.url,obj.pdf.url)
 		else:
 			return 'no published pdf yet'
 	show_pdf_url.allow_tags = True
@@ -58,5 +82,7 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.unregister(User)	
 admin.site.register(User, UserAdmin)
+admin.site.register(Assets, AssetAdmin)
 admin.site.register(Sow, SowAdmin, Media=CommonMedia)
 admin.site.register(Assets, AssetAdmin)
+admin.site.register(Timeline, TimelineAdmin)
