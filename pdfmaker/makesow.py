@@ -348,6 +348,7 @@ def printpdf(sow,sectionset):
 	s = s.replace('/','_')
 	filename = os.path.join(pdfsettings.MEDIA_ROOT,"pdf/sow/{0}_{1}.pdf".format(s,versiondate))
 
+
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
 	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=llaterPages(sow))
 	doc = BaseDocTemplate(filename,pagesize=letter,pageTemplates=[pageOne,mainPages])

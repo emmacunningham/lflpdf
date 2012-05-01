@@ -35,7 +35,6 @@ class Sow(Sortable):
 	author = models.ForeignKey(UserProfile)
 	pdf = models.FileField(upload_to='pdf/sow',blank=True,null=True)
 	img = models.ForeignKey(Assets,blank=True,null=True)
-	pdf_slug = models.SlugField()
 		
 	def __unicode__(self):
 		return self.project

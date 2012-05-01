@@ -40,20 +40,40 @@ numgrey = CMYKColor(0,0,0,0.6)
 # sets path for registerFont to find fonts in right place 
 reportlab.rl_config.TTFSearchPath.append( os.path.join(pdf.settings.STATIC_ROOT,'fonts') )
 
-def timerange(timeline,timelineset):
-	start = timeline.objects.dates('datestart','day')
-	end = timeline.objects.dates('dateend','day',order='DESC')
-	firstdate = start[0]
-	lastdate = end[0]
-	return str(firstdate)
-	
+# drawing definitions  
+width = 792
+height = 612
+margin = 30
 
+def fileDateTime(datetime):
+	month = datetime.strftime('%B')
+	day = datetime.day
+	year = datetime.year
+	return "{}_{}_{}".format(month, day, year)
+
+def timelinerange(timeline):
+	datestartall = timeline.timelinepoint_set.dates('datestart','day')
+	dateendall = timeline.timelinepoint_set.dates('dateend','day',order='DESC')
+	timelinefirst = datestartall[0]
+	timelinelast = dateendall[0]
+	s = fileDateTime(timelinelast)
+	return s
+
+def drawlines(canvas):
+	canvas.setStrokeColorRGB(0.2,0.5,0.3)
+	canvas.line(0,0,70,70)
+	textobject = canvas.beginText()
+	textobject.setTextOrigin(51.2,749)
+	textobject.textLines('''
+	LEFT 
+	FIELD 
+	LABS
+	''')
+	canvas.drawText(textobject)
 
 def printpdf(timeline,timelineset):
-	filename = "media/pdf/timeline/{0}.pdf".format(timeline.project)
-	doc = SimpleDocTemplate(filename,pagesize=letter)
-	doc.pagesize = landscape(letter)
-	Story = []
-	Story.append(Paragraph(timerange(timeline,timelineset),styles['Normal']))
-	Story.append(Paragraph("hi",styles['Normal']))
-	doc.build(Story)
+	filename = os.path.join(pdf.settings.MEDIA_ROOT,'pdf/timeline/{0}.pdf'.format(timeline.project))
+	c = canvas.Canvas(filename,pagesize=letter)
+	c.pagesize = landscape(letter)
+	drawlines(c)
+	c.save()
