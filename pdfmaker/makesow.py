@@ -3,7 +3,7 @@ import html2text
 import datetime
 import time
 
-import pdf.settings
+import pdf.settings as pdfsettings
 import os
 
 from django.core.files import File
@@ -37,7 +37,7 @@ linegrey = CMYKColor(0,0,0,0.3)
 numgrey = CMYKColor(0,0,0,0.6)
 
 # sets path for registerFont to find fonts in right place 
-reportlab.rl_config.TTFSearchPath.append( os.path.join(pdf.settings.STATIC_ROOT,'fonts') )
+reportlab.rl_config.TTFSearchPath.append( os.path.join(pdfsettings.STATIC_ROOT,'fonts') )
 
 # building fonts
 pdfmetrics.registerFont(TTFont('Akkurat-Reg','Akkurat-Reg.ttf'))
@@ -115,9 +115,11 @@ def ffirstPage(sow):
 	def firstPage(canvas, doc):
 		canvas.saveState()
 		if img:
-			canvas.drawImage('media/{}'.format(img.name),0,0,width=mainTextMargin-12,height=792)
+			path = os.path.join(pdfsettings.MEDIA_ROOT, 'img/{}'.format(img.name))
+			canvas.drawImage(path,0,0,width=mainTextMargin-12,height=792)
 		else:
-			canvas.drawImage('media/img/default.jpg',0,0,width=mainTextMargin-12,height=792)
+			path = os.path.join(pdfsettings.MEDIA_ROOT, 'img/default.jpg')
+			canvas.drawImage(path,0,0,width=mainTextMargin-12,height=792)
 			
 		lfleft(canvas)
 		contactleftFirstPage(canvas)
@@ -129,16 +131,18 @@ def llaterPages(sow):
 	def laterPages(canvas, doc):
 		canvas.saveState()
 		if img:
-			canvas.drawImage('media/{}'.format(img.name),0,0,width=mainTextMargin-12,height=792)
+			path = os.path.join(pdfsettings.MEDIA_ROOT, 'img/{0}'.format(img.name))
+			canvas.drawImage(path,0,0,width=mainTextMargin-12,height=792)
 		else:
-			canvas.drawImage('media/img/default.jpg',0,0,width=mainTextMargin-12,height=792)
+			path = os.path.join(pdfsettings.MEDIA_ROOT, 'img/default.jpg')
+			canvas.drawImage(path,0,0,width=mainTextMargin-12,height=792)
 		contactleftLaterPages(canvas)
 		canvas.restoreState()
 	return laterPages
 	
 # hacked tabbing
 def tab(left,right,tabamt):
-	data = [['{}'.format(left),'{}'.format(right)]]
+	data = [['{0}'.format(left),'{0}'.format(right)]]
 	t = Table(data)
 	t.hAlign = 'LEFT'
 	t.setStyle(TableStyle([('LEFTPADDING',(0,0),(1,0),0)]))
@@ -149,7 +153,7 @@ def tab(left,right,tabamt):
 	return t
 	
 def projectInfo(sow,story):
-	authorname = '{} {}'.format(sow.author.user.first_name,sow.author.user.last_name)
+	authorname = '{0} {1}'.format(sow.author.user.first_name,sow.author.user.last_name)
 	authorphone = sow.author.phone
 	statementofwork = Paragraph("<para spaceAfter=20><font name='Akkurat-Reg' size=16>// STATEMENT OF WORK<br/></font></para>",styles['Normal'])
 	project = tab('PROJECT:',sow.project,83)
@@ -190,7 +194,7 @@ def buildIndex(sow,story):
 	for content in sectionset:
 		sectionid = addZero(i)
 		sectiontitle = content.sectiontitle
-		section_print = tab('{}'.format(sectionid),'{}'.format(sectiontitle),22)	
+		section_print = tab('{0}'.format(sectionid),'{0}'.format(sectiontitle),22)	
 		section_print.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 								('SIZE',(0,0),(1,0),10),
 								('TEXTCOLOR',(0,0),(0,0),numgrey)]))
@@ -230,13 +234,13 @@ def prettyDateTime(datetime):
 	month = datetime.strftime('%B')
 	day = datetime.day
 	year = datetime.year
-	return "{} {}, {}".format(month, day, year)
+	return "{0} {1}, {2}".format(month, day, year)
 
 def fileDateTime(datetime):
 	month = datetime.strftime('%B')
 	day = datetime.day
 	year = datetime.year
-	return "{}_{}_{}".format(month, day, year)
+	return "{0}_{1}_{2}".format(month, day, year)
 
 
 def addZero(num):
@@ -325,7 +329,7 @@ def signatures(story):
 
 def printpdf(sow,sectionset):
 	versiondate = fileDateTime(datetime.datetime.today())
-	filename = "media/pdf/{}_{}.pdf".format(sow.project,versiondate)
+	filename = os.path.join(pdfsettings.MEDIA_ROOT, "pdf/{0}_{1}.pdf".format(sow.project,versiondate))
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
 	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=llaterPages(sow))
 	doc = BaseDocTemplate(filename.format(filename),pagesize=letter,pageTemplates=[pageOne,mainPages])
@@ -333,7 +337,7 @@ def printpdf(sow,sectionset):
 	c = canvas.Canvas(filename)
 	style = styles['Normal']
 	#firstpage client details and index
-	c.drawImage("http://some-antics.com/emma/appmedia/side.jpg",0,0,width=mainTextMargin-12,height=792)
+	#c.drawImage("http://some-antics.com/emma/appmedia/side.jpg",0,0,width=mainTextMargin-12,height=792)
 	Story.append(FrameBreak())
 	projectInfo(sow,Story)
 	buildIndex(sow,Story)	

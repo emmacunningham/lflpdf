@@ -32,7 +32,7 @@ class SowAdmin(SortableAdmin):
 	
 	def show_pdf_url(self,obj):
 		if obj.pdf:
-			return '<a href="{}">{}</a>'.format(obj.pdf.url,obj.pdf.url)
+			return '<a href="{0}">{1}</a>'.format(obj.pdf.url,obj.pdf.url)
 		else:
 			return 'no published pdf yet'
 	show_pdf_url.allow_tags = True
