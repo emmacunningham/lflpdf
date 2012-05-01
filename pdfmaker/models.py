@@ -34,7 +34,8 @@ class Sow(Sortable):
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
 	pdf = models.FileField(upload_to='pdf/sow',blank=True,null=True)
-	img = models.ForeignKey(Assets,blank=True,null=True,default=3)
+	img = models.ForeignKey(Assets,blank=True,null=True)
+	pdf_slug = models.SlugField()
 		
 	def __unicode__(self):
 		return self.project
@@ -65,9 +66,10 @@ class Milestones(Sortable):
 	class Meta:
 		pass
 	timeline = models.ForeignKey(Timeline)
-	description = models.CharField(max_length=255)
-	milestone_date = models.DateField('milestone date')
+	description = models.CharField(max_length=255,null=True)
+	milestone_date = models.DateField('milestone date',null=True)
 	
 	def __unicode__(self):
 		return self.description
+
 

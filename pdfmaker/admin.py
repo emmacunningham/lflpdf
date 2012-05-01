@@ -1,5 +1,5 @@
 from adminsortable.admin import SortableAdmin, SortableTabularInline
-from pdfmaker.models import Sow, Content, UserProfile, Assets, Timeline, Milestones
+from pdfmaker.models import Sow, Content, UserProfile, Assets, Timeline, Milestones, TimelineCategory, TimelinePoint
 from django.contrib import admin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -42,16 +42,42 @@ class MilestoneInline(SortableTabularInline):
 	model = Milestones
 	extra = 2
 
+class TimelineCategoryInline(SortableTabularInline):
+	model = TimelineCategory
+	extra = 2
+
+class TimelineCategoryAdmin(admin.ModelAdmin):
+	fieldsets = [
+		(None, {'fields': ['categoryname']}),]
+	
+class TimelinePointInline(SortableTabularInline):
+	model = TimelinePoint
+	extra = 2
+	fieldsets = [
+		(None, {'fields': ['timelinecategory']}),
+		(None, {'fields': ['pointinformation']}),
+		(None, {'fields': ['datestart']}),
+		(None, {'fields': ['datehighstart']}),
+		(None, {'fields': ['dateend']})
+	]
+
+
 class TimelineAdmin(admin.ModelAdmin):
+	fieldsets = [
+		(None, {'fields': ['author']}),
+		(None, {'fields': ['project']}),
+		(None, {'fields': ['client']}),
+		('Date published', {'fields': ['pub_date']}),
+	]
 	list_display = ('project','client','pub_date','author','show_pdf_url')
 	list_filter = ['author','pub_date','project']
-	inlines = [MilestoneInline]
+	inlines = [MilestoneInline, TimelinePointInline]
 	actions = ['publish_pdf']
 
 	def publish_pdf(self,request,queryset):
-		for sow in queryset:
-			sectionset = sow.content_set.order_by('order')
-			maketimeline.printpdf(sow,sectionset)
+		for timeline in queryset:
+			timelineset = timeline.timelinepoint_set.all()
+			maketimeline.printpdf(timeline,timelineset)
 	publish_pdf.short_description = "Publish as .pdf"
 	
 	def show_pdf_url(self,obj):
@@ -85,4 +111,3 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Assets, AssetAdmin)
 admin.site.register(Sow, SowAdmin, Media=CommonMedia)
 admin.site.register(Timeline, TimelineAdmin)
-
