@@ -340,6 +340,7 @@ def printpdf(sow,sectionset):
 	versiondate = fileDateTime(datetime.datetime.today())
 	s = '{0}'.format(sow.project)
 	s = s.replace(' ','')
+	s = s.replace('/','_')
 	filename = "media/pdf/sow/{0}_{1}.pdf".format(s,versiondate)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
 	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=llaterPages(sow))
