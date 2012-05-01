@@ -20,7 +20,7 @@ post_save.connect(create_user_profile, sender=User)
 
 class Assets(models.Model):
 	img = models.FileField(upload_to='img/',blank=True,null=True)
-	
+	name = Models.CharField(max_length=255,blank=True,null=True)
 	def __unicode__(self):
 		return self.img.name
 
