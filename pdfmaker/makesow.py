@@ -115,7 +115,7 @@ def ffirstPage(sow):
 	def firstPage(canvas, doc):
 		canvas.saveState()
 		if img:
-			path = os.path.join(pdfsettings.MEDIA_ROOT, 'img/{}'.format(img.name))
+			path = os.path.join(pdfsettings.MEDIA_ROOT, 'img/{0}'.format(img.name))
 			canvas.drawImage(path,0,0,width=mainTextMargin-12,height=792)
 		else:
 			path = os.path.join(pdfsettings.MEDIA_ROOT, 'img/default.jpg')
