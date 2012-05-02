@@ -266,11 +266,18 @@ def formatsectioncontent(string,story):
 
 
 	def dumbp(matchobj):
-		s = matchobj.group(1)
-		s += '[br]'
-		return s
+		p = re.search('margin-left: (.*?)pt;',matchobj.group(1))
+		if p:
+			s = '[indent {0}indent]'.format(p.group(1))
+			s += matchobj.group(2)
+			s += '[/indent]'
+			return s
+		else:
+			s = matchobj.group(2)
+			s += '[br]'
+			return s
 
-	string = re.sub('<p .*?>(.*?)</p>',dumbp,string)
+	string = re.sub('<p (.*?)>(.*?)</p>',dumbp,string)
 
 	def dumbspan(matchobj):
 		s = ''
