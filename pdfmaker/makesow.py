@@ -253,6 +253,28 @@ def addZero(num):
 		return sectionid
 		
 def formatsectioncontent(string,story):
+	def dumbb(matchobj):
+		s = matchobj.group(1)
+		return s
+		
+	string = re.sub('<b .*?>(.*?)</b>',dumbb,string)
+	string = re.sub('<b .*?>(.*?)</b>',dumbb,string)
+	
+	
+	def dumbp(matchobj):
+		s = matchobj.group(1)
+		s += '[br]'
+		return s
+		
+	string = re.sub('<p .*?>(.*?)</p>',dumbp,string)
+	
+	def dumbspan(matchobj):
+		s = ''
+		s += matchobj.group(1)
+		return s
+		
+	string = re.sub('<span .*?>(.*?)</span>',dumbspan,string)
+
 	# temp replace html styling to non-html tags
 	string = string.replace('<br />','[br]')
 	string = string.replace('<b>','[b]')
@@ -262,7 +284,20 @@ def formatsectioncontent(string,story):
 	string = string.replace('<u>','[u]')
 	string = string.replace('</u>','[/u]')
 	
-	string = string.replace('<ul style="padding-top: 0px; padding-bottom: 0px; ">','[ul]')
+	def dumbul(matchobj):
+		s = ''
+		s += matchobj.group(1)
+		return s
+		
+	string = re.sub('<ul .*?>(.*?)</ul>',dumbul,string)
+	
+	def dumbli(matchobj):
+		s = '-'
+		s += matchobj.group(1)
+		return s
+		
+	string = re.sub('<li .*?>(.*?)</li>',dumbli,string)
+	
 	string = string.replace('<ul>','[ul]')
 	string = string.replace('</ul>','[/ul]')
 	
@@ -281,9 +316,11 @@ def formatsectioncontent(string,story):
 	string = string.replace('<div style="margin-left:','[indent')	
 	string = string.replace('px; ">','indent]')
 	string = string.replace('</div>','[/indent]')
+
+
 	
 	# strip away all html
-	string = html2text.html2text(string)
+	#string = html2text.html2text(string)
 	
 	# convert non-html tags to reportlab-friendly inline tags
 	string = string.replace('[br]','<br/>')
