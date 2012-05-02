@@ -310,7 +310,6 @@ def formatsectioncontent(string,story):
 
 	string = string.replace('[ul]','[br]')
 	string = string.replace('[/ul]','')
-	string = string.replace('</li>','</li>[br]')
 
 	string = string.replace('<div style="margin-left:','[indent')	
 	string = string.replace('px; ">','indent]')
