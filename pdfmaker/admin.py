@@ -22,7 +22,7 @@ class SowAdmin(SortableAdmin):
 	]
 	list_display = ('project','client','pub_date','author','show_pdf_url')
 	list_filter = ['author','pub_date','project']
-	inlines = [AssetInline,ContentInline]
+	#inlines = [AssetInline,ContentInline]
 	actions = ['publish_pdf']
 
 	def publish_pdf(self,request,queryset):
@@ -84,6 +84,5 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Assets, AssetAdmin)
 admin.site.register(Sow, SowAdmin, Media=CommonMedia)
-admin.site.register(Assets, AssetAdmin)
 admin.site.register(Timeline, TimelineAdmin)
-admin.site.register(Assets, AssetAdmin)
+
