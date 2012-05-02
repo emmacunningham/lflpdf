@@ -22,7 +22,7 @@ class SowAdmin(SortableAdmin):
 	]
 	list_display = ('project','client','pub_date','author','show_pdf_url')
 	list_filter = ['author','pub_date','project']
-	#inlines = [AssetInline,ContentInline]
+	inlines = [ContentInline]
 	actions = ['publish_pdf']
 
 	def publish_pdf(self,request,queryset):
