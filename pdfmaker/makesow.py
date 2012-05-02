@@ -342,28 +342,30 @@ def signatures(story):
 
 def printpdf(sow,sectionset):
 	versiondate = fileDateTime(datetime.datetime.today())
-	filename = os.path.join(pdfsettings.MEDIA_ROOT, "pdf/{0}_{1}.pdf".format(sow.project,versiondate))
+	s = '{0}'.format(sow.project)
+	s = s.replace(' ','')
+	s = s.replace('/','_')
+	filename = "media/pdf/sow/{0}_{1}.pdf".format(s,versiondate)
 	pageOne = PageTemplate(id='FirstPage',frames=[frameFirstPageSide,frameFirstPageMain],onPage=ffirstPage(sow))
 	mainPages = PageTemplate(id='Sections',frames=[frameLaterPagesMain],onPage=llaterPages(sow))
-	doc = BaseDocTemplate(filename.format(filename),pagesize=letter,pageTemplates=[pageOne,mainPages])
+	doc = BaseDocTemplate(filename,pagesize=letter,pageTemplates=[pageOne,mainPages])
 	Story = []
 	c = canvas.Canvas(filename)
 	style = styles['Normal']
 	#firstpage client details and index
-	#c.drawImage("http://some-antics.com/emma/appmedia/side.jpg",0,0,width=mainTextMargin-12,height=792)
 	Story.append(FrameBreak())
 	projectInfo(sow,Story)
 	buildIndex(sow,Story)	
-	
+
 	#rest of pages
 	Story.append(NextPageTemplate('Sections'))
-		
+
 	#main text content
 	sectionContent(Story,sectionset)
-	
+
 	#signatures
 	signatures(Story)
-	
+
 	doc.build(Story)
 
 	f = open(filename)
