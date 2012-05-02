@@ -70,4 +70,10 @@ class Milestones(Sortable):
 	
 	def __unicode__(self):
 		return self.description
+<<<<<<< HEAD
 	
+=======
+	
+
+	
+>>>>>>> 3e90f18395133742185e2dd1fb6c7c719f15890d
