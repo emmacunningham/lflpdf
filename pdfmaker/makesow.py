@@ -251,8 +251,42 @@ def addZero(num):
 	else:
 		sectionid = num	
 		return sectionid
-		
+
+
 def formatsectioncontent(string,story):
+	string = string.replace('&nbsp;','')
+	string = string.replace('<br>','[br]')
+	
+
+		
+	def dumbb(matchobj):
+		s = matchobj.group(1)
+		return s
+
+	string = re.sub('<b .*?>(.*?)</b>',dumbb,string)
+
+
+	def dumbp(matchobj):
+		p = re.search('margin-left: (.*?)pt;',matchobj.group(1))
+		if p:
+			s = '[indent {0}indent]'.format(p.group(1))
+			s += matchobj.group(2)
+			s += '[/indent]'
+			return s
+		else:
+			s = matchobj.group(2)
+			s += '[br]'
+			return s
+				
+	string = re.sub('<p (.*?)>(.*?)</p>',dumbp,string)
+
+	def dumbspan(matchobj):
+		s = ''
+		s += matchobj.group(1)
+		return s
+
+	string = re.sub('<span .*?>(.*?)</span>',dumbspan,string)
+
 	# temp replace html styling to non-html tags
 	string = string.replace('<br />','[br]')
 	string = string.replace('<b>','[b]')
@@ -261,30 +295,71 @@ def formatsectioncontent(string,story):
 	string = string.replace('</i>','[/i]')
 	string = string.replace('<u>','[u]')
 	string = string.replace('</u>','[/u]')
-	
-	string = string.replace('<ul style="padding-top: 0px; padding-bottom: 0px; ">','[ul]')
+
+	def dumbul(matchobj):
+		s = ''
+		s += matchobj.group(1)
+		return s
+
+	string = re.sub('<ul .*?>(.*?)</ul>',dumbul,string)
+
+
+
 	string = string.replace('<ul>','[ul]')
 	string = string.replace('</ul>','[/ul]')
-	
+
 	def lidash(matchobj):
 		s = matchobj.group()
 		s = s.replace('<li>','-')
 		s = s.replace('</li>','[br]')
 		return s
-		
+
 	string = re.sub('\[ul\].*?(<li>)(.*?)</li>.*?\[/ul\]',lidash,string)
-	
+
 	string = string.replace('[ul]','[br]')
 	string = string.replace('[/ul]','')
-	string = string.replace('</li>','</li>[br]')
-	
+
 	string = string.replace('<div style="margin-left:','[indent')	
 	string = string.replace('px; ">','indent]')
 	string = string.replace('</div>','[/indent]')
+
+	def dumba(matchobj):
+		if len(matchobj.group(2)) > 80:
+			s =  matchobj.group(1)
+			s += 'link'
+			s += '</a>'
+		else:
+			s =  matchobj.group(1)
+			s += matchobj.group(2)
+			s += '</a>'
+		return s
+
+	string = re.sub('(<a .*?>)(.*?)</a>',dumba,string)
 	
+	def dumbol(matchobj):
+		s = matchobj.group(1)
+		c = 1
+		listitems = ''
+		for i in re.finditer('<li .*?>(.*?)</li>',s):
+			listitems += str(c)
+			listitems += '.'
+			listitems += ' '
+			listitems += i.group(1)
+			c = c + 1
+		return listitems
+
+	string = re.sub('<ol .*?>(.*?)</ol>',dumbol,string)
+	
+	def dumbli(matchobj):
+		s = '-'
+		s += matchobj.group(1)
+		return s
+
+	string = re.sub('<li .*?>(.*?)</li>',dumbli,string)
+
 	# strip away all html
-	string = html2text.html2text(string)
-	
+	#string = html2text.html2text(string)
+
 	# convert non-html tags to reportlab-friendly inline tags
 	string = string.replace('[br]','<br/>')
 	string = string.replace('[b]','<b>')
@@ -294,7 +369,7 @@ def formatsectioncontent(string,story):
 	string = string.replace('[u]','<u>')
 	string = string.replace('[/u]','</u>')
 
-	
+
 	# general non-html tag regex
 	bracketre = re.compile('(\[indent .*?indent\].*?\[/indent\])',re.S)
 	parsedbracketlist = bracketre.split(string)
