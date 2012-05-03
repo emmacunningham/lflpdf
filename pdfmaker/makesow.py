@@ -257,11 +257,12 @@ def formatsectioncontent(string,story):
 	string = string.replace('&nbsp;','')
 	string = string.replace('<br>','[br]')
 	
+
+		
 	def dumbb(matchobj):
 		s = matchobj.group(1)
 		return s
 
-	string = re.sub('<b .*?>(.*?)</b>',dumbb,string)
 	string = re.sub('<b .*?>(.*?)</b>',dumbb,string)
 
 
@@ -276,7 +277,7 @@ def formatsectioncontent(string,story):
 			s = matchobj.group(2)
 			s += '[br]'
 			return s
-
+				
 	string = re.sub('<p (.*?)>(.*?)</p>',dumbp,string)
 
 	def dumbspan(matchobj):

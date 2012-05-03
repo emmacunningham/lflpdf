@@ -1,5 +1,5 @@
 from adminsortable.admin import SortableAdmin, SortableTabularInline
-from pdfmaker.models import Sow, Content, UserProfile, Assets, Timeline, Milestones, TimelineCategory, TimelinePoint
+from pdfmaker.models import Sow, Content, UserProfile, Assets, Timeline, Milestones
 from django.contrib import admin
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -42,25 +42,6 @@ class MilestoneInline(SortableTabularInline):
 	model = Milestones
 	extra = 2
 
-class TimelineCategoryInline(SortableTabularInline):
-	model = TimelineCategory
-	extra = 2
-
-class TimelineCategoryAdmin(admin.ModelAdmin):
-	fieldsets = [
-		(None, {'fields': ['categoryname']}),]
-	
-class TimelinePointInline(SortableTabularInline):
-	model = TimelinePoint
-	extra = 2
-	fieldsets = [
-		(None, {'fields': ['timelinecategory']}),
-		(None, {'fields': ['pointinformation']}),
-		(None, {'fields': ['datestart']}),
-		(None, {'fields': ['datehighstart']}),
-		(None, {'fields': ['dateend']})
-	]
-
 
 class TimelineAdmin(admin.ModelAdmin):
 	fieldsets = [
@@ -71,7 +52,7 @@ class TimelineAdmin(admin.ModelAdmin):
 	]
 	list_display = ('project','client','pub_date','author','show_pdf_url')
 	list_filter = ['author','pub_date','project']
-	inlines = [MilestoneInline, TimelinePointInline]
+	inlines = [MilestoneInline]
 	actions = ['publish_pdf']
 
 	def publish_pdf(self,request,queryset):
