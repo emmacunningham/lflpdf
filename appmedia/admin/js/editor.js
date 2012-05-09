@@ -19,6 +19,8 @@ dojo.require("dojox.editor.plugins.NormalizeIndentOutdent");
 dojo.require("dojox.editor.plugins.PrettyPrint");	// let's pretty-print our HTML
 dojo.require("dojox.editor.plugins.AutoUrlLink");
 dojo.require("dojox.editor.plugins.ToolbarLineBreak");
+dojo.require("dijit._editor.plugins.TabIndent");
+
 
 dojo.ready(function(){
   var textareas = dojo.query("textarea");
@@ -27,19 +29,12 @@ dojo.ready(function(){
     textareas.instantiate(dijit.Editor, {
       styleSheets: "/appmedia/style.css;/appmedia/blog/style.css",
       plugins: [
-        "collapsibletoolbar",
-        "fullscreen", "viewsource", "|",
-        "undo", "redo", "|",
-        "cut", "copy", "paste", "|",
-        "bold", "italic", "underline", "strikethrough", "|",
+        "fullscreen", "removeFormat", "|",
+        "bold", "italic", "underline", "|",
         "insertOrderedList", "insertUnorderedList", "indent", "outdent", "||",
-        "formatBlock", "fontName", "fontSize", "||",
-        "findreplace", "insertEntity", "blockquote", "|",
-        "createLink", "insertImage", "insertanchor", "|",
-        "foreColor", "hiliteColor", "|",
-        "showblocknodes", "pastefromword",
+        
         // headless plugins
-        "normalizeindentoutdent", "prettyprint",
+        "normalizeindentoutdent", //"dijit._editor.plugins.TabIndent"
         "autourllink", "dijit._editor.plugins.EnterKeyHandling"
       ]
     });
