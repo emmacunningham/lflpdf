@@ -42,7 +42,6 @@ class MilestoneInline(SortableTabularInline):
 	model = Milestones
 	extra = 2
 
-
 class TimelineAdmin(admin.ModelAdmin):
 	fieldsets = [
 		(None, {'fields': ['author']}),
@@ -91,4 +90,6 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Assets, AssetAdmin)
 admin.site.register(Sow, SowAdmin, Media=CommonMedia)
-admin.site.register(Timeline, TimelineAdmin)
+
+# Commenting out timeline admin until it's finished.
+#admin.site.register(Timeline, TimelineAdmin)

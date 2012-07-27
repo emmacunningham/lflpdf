@@ -69,7 +69,7 @@ frameFirstPageMain = Frame(x1=mainTextMargin,y1=0,width=612-mainTextMargin,heigh
 def lfleft(canvas):
 	textobject = canvas.beginText()
 	textobject.setTextOrigin(51.2,749)
-	textobject.setFont('Gridnik',25)
+	textobject.setFont('Gridnik',27)
 	textobject.textLines('''
 	LEFT 
 	FIELD 
@@ -79,35 +79,45 @@ def lfleft(canvas):
 	
 def contactleftFirstPage(canvas):
 	textobject = canvas.beginText()
-	addrwidth = canvas.stringWidth('510 Victoria Ave, Venice CA 90291','Akkurat',9)
-	emailwidth = canvas.stringWidth('www.leftfieldlabs.com','Akkurat',9)
-	emailx = addrwidth - emailwidth + 30
-	textobject.setTextOrigin(30,57)	
-	textobject.setFont('Akkurat',9)
+	addrwidth = canvas.stringWidth('510 Victoria Ave, Venice CA 90291','Akkurat',10)
+	urlwidth = canvas.stringWidth('www.leftfieldlabs.com','Akkurat',10)
+	urlx = addrwidth - urlwidth + 18
+	phonewidth = canvas.stringWidth('424-500-2045','Akkurat',10)	
+	phonex = addrwidth - phonewidth + 18	
+	textobject.setTextOrigin(18,75)	
+	textobject.setFont('Akkurat',10)
 	textobject.textLine('510 Victoria Ave, Venice CA 90291')
 	yy = textobject.getY()
-	textobject.setTextOrigin(emailx,yy)
+	textobject.setTextOrigin(urlx,yy)
 	textobject.textLine('www.leftfieldlabs.com')
+	yyy = textobject.getY()
+	textobject.setTextOrigin(phonex,yyy)
+	textobject.textLine('424-500-2045')
 	canvas.drawText(textobject)
 
 
 def contactleftLaterPages(canvas):
 	textobject = canvas.beginText()
 	lflwidth = canvas.stringWidth('LEFT FIELD LABS','Gridnik',12)
-	addrwidth = canvas.stringWidth('510 Victoria Ave, Venice CA 90291','Akkurat',9)
-	emailwidth = canvas.stringWidth('www.leftfieldlabs.com','Akkurat',9)
-	lflx = addrwidth - lflwidth + 30
-	emailx = addrwidth - emailwidth + 30
-	textobject.setTextOrigin(lflx,57)
+	addrwidth = canvas.stringWidth('510 Victoria Ave, Venice CA 90291','Akkurat',10)
+	urlwidth = canvas.stringWidth('www.leftfieldlabs.com','Akkurat',10)
+	phonewidth = canvas.stringWidth('424-500-2045','Akkurat',10)	
+	phonex = addrwidth - phonewidth + 18
+	lflx = addrwidth - lflwidth + 18
+	urlx = addrwidth - urlwidth + 18
+	textobject.setTextOrigin(lflx,75)
 	textobject.setFont('Gridnik',12)
 	textobject.textLine('LEFT FIELD LABS')
 	y = textobject.getY()
-	textobject.setTextOrigin(30,y)
-	textobject.setFont('Akkurat',9)
+	textobject.setTextOrigin(18,y)
+	textobject.setFont('Akkurat',10)
 	textobject.textLine('510 Victoria Ave, Venice CA 90291')
 	yy = textobject.getY()
-	textobject.setTextOrigin(emailx,yy)
+	textobject.setTextOrigin(urlx,yy)
 	textobject.textLine('www.leftfieldlabs.com')
+	yyy = textobject.getY()
+	textobject.setTextOrigin(phonex,yyy)
+	textobject.textLine('424-500-2045')
 	canvas.drawText(textobject)
 
 def ffirstPage(sow):
@@ -154,27 +164,27 @@ def tab(left,right,tabamt):
 	
 def projectInfo(sow,story):
 	authorname = '{0} {1}'.format(sow.author.user.first_name,sow.author.user.last_name)
-	authorphone = sow.author.phone
+	authoremail = sow.author.user.email
 	statementofwork = Paragraph("<para spaceAfter=20><font name='Akkurat-Reg' size=16>// STATEMENT OF WORK<br/></font></para>",styles['Normal'])
 	project = tab('PROJECT:',sow.project,83)
 	client = tab('CLIENT:',sow.client,83)
 	date = tab('DATE:',prettyDateTime(sow.pub_date),83)
 	author = tab('CONTACT:',authorname,83)
-	phone = tab('',authorphone,83)
+	phone = tab('',authoremail,83)
 	project.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-							('SIZE',(0,0),(1,0),10),
+							('SIZE',(0,0),(1,0),12),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-							('SIZE',(0,0),(1,0),10),
+							('SIZE',(0,0),(1,0),12),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
 	date.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-							('SIZE',(0,0),(1,0),10),
+							('SIZE',(0,0),(1,0),12),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 	author.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-							('SIZE',(0,0),(1,0),10),
+							('SIZE',(0,0),(1,0),12),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 	phone.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-							('SIZE',(0,0),(1,0),10),
+							('SIZE',(0,0),(1,0),12),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
 	story.append(statementofwork)
 	story.append(project)
@@ -184,9 +194,9 @@ def projectInfo(sow,story):
 	story.append(phone)
 	
 def buildIndex(sow,story):
-	index = tab('//','INDEX',22)
+	index = tab('//','INDEX',24)
 	index.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Reg'),
-							('SIZE',(0,0),(1,0),10),
+							('SIZE',(0,0),(1,0),12),
 							('TOPPADDING',(0,0),(1,0),20)]))
 	sectionset = sow.content_set.order_by('order')
 	story.append(index)
@@ -196,7 +206,7 @@ def buildIndex(sow,story):
 		sectiontitle = content.sectiontitle
 		section_print = tab('{0}'.format(sectionid),'{0}'.format(sectiontitle),22)	
 		section_print.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-								('SIZE',(0,0),(1,0),10),
+								('SIZE',(0,0),(1,0),12),
 								('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 		story.append(section_print)
 		i = i + 1
@@ -204,7 +214,7 @@ def buildIndex(sow,story):
 def sectionHeaders(sectionid,sectiontitle):
 	sectionhead = tab(sectionid,sectiontitle.upper(),22)
 	sectionhead.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Reg'),
-							('SIZE',(0,0),(1,0),14),
+							('SIZE',(0,0),(1,0),16),
 							('TEXTCOLOR',(0,0),(0,0),numgrey),
 							('LINEBELOW',(0,0),(1,0),1,linegrey),
 							('BOTTOMPADDING',(0,0),(1,0),15),
@@ -256,9 +266,7 @@ def addZero(num):
 def formatsectioncontent(string,story):
 	string = string.replace('&nbsp;','')
 	string = string.replace('<br>','[br]')
-	
-
-		
+			
 	def dumbb(matchobj):
 		s = matchobj.group(1)
 		return s
@@ -267,7 +275,7 @@ def formatsectioncontent(string,story):
 
 
 	def dumbp(matchobj):
-		p = re.search('margin-left: (.*?)pt;',matchobj.group(1))
+		p = re.search('margin-left: (.*?)px;',matchobj.group(1))
 		if p:
 			s = '[indent {0}indent]'.format(p.group(1))
 			s += matchobj.group(2)
@@ -385,7 +393,7 @@ def formatsectioncontent(string,story):
 		else:
 			text = text.replace('[/indent]','')
 			styles = getSampleStyleSheet()
-			styles.add(ParagraphStyle(name='Akkuratfonts',fontName='Akkurat',fontSize=9))
+			styles.add(ParagraphStyle(name='Akkuratfonts',fontName='Akkurat',fontSize=11))
 			p = Paragraph(text,styles['Akkuratfonts'])
 			story.append(p)
 
@@ -393,7 +401,7 @@ def signatures(story):
 	story.append(Spacer(width=612-mainTextMargin,height=100))
 	client = tab("Client","Date",150)
 	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-							('SIZE',(0,0),(1,0),9),
+							('SIZE',(0,0),(1,0),11),
 							('TEXTCOLOR',(0,0),(1,0),numgrey),
 							('LINEABOVE',(0,0),(1,0),1,linegrey),
 							('BOTTOMPADDING',(0,0),(1,0),50),
@@ -404,7 +412,7 @@ def signatures(story):
 	
 	agency = tab("Agency","Date",150)
 	agency.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
-							('SIZE',(0,0),(1,0),9),
+							('SIZE',(0,0),(1,0),11),
 							('TEXTCOLOR',(0,0),(1,0),numgrey),
 							('LINEABOVE',(0,0),(1,0),1,linegrey),
 							('BOTTOMPADDING',(0,0),(1,0),15),
