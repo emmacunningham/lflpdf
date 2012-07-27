@@ -397,9 +397,14 @@ def formatsectioncontent(string,story):
 			p = Paragraph(text,styles['Akkuratfonts'])
 			story.append(p)
 
-def signatures(story):
+def signatures(sow,story):
 	story.append(Spacer(width=612-mainTextMargin,height=100))
-	client = tab("Client","Date",150)
+	client_agency = sow.client
+	if sow.client_contact:
+		client_signature = sow.client_contact + '\n' + client_agency
+	else:
+	  client_signature = client_agency + '\n'
+	client = tab(client_signature,"Date\n",150)
 	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),11),
 							('TEXTCOLOR',(0,0),(1,0),numgrey),
@@ -407,10 +412,11 @@ def signatures(story):
 							('BOTTOMPADDING',(0,0),(1,0),50),
 							('RIGHTPADDING',(1,0),(1,0),20),
 							('LEFTPADDING',(1,0),(1,0),20)]))
-
 	client._argW[1] = 150
+	agency_signature_rep = sow.agency_signature
+	agency_signature = '{0} - Partner\nLeft Field Labs, LLC'.format(agency_signature_rep)
 	
-	agency = tab("Agency","Date",150)
+	agency = tab(agency_signature,"Date\n",150)
 	agency.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),11),
 							('TEXTCOLOR',(0,0),(1,0),numgrey),
@@ -419,6 +425,8 @@ def signatures(story):
 							('RIGHTPADDING',(1,0),(1,0),20),
 							('LEFTPADDING',(1,0),(1,0),20)]))
 	agency._argW[1] = 150
+	
+	
 	story.append(client)
 	story.append(agency)
 
@@ -450,7 +458,7 @@ def printpdf(sow,sectionset):
 	sectionContent(Story,sectionset)
 
 	#signatures
-	signatures(Story)
+	signatures(sow,Story)
 
 	doc.build(Story)
 

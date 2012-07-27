@@ -14,9 +14,9 @@ class ContentInline(SortableTabularInline):
 	
 class SowAdmin(SortableAdmin):
 	fieldsets = [
-		(None, {'fields': ['author']}),
+		(None, {'fields': ['author', 'agency_signature']}),
 		(None, {'fields': ['project']}),
-		(None, {'fields': ['client']}),
+		(None, {'fields': ['client', 'client_contact']}),
 		('Date published', {'fields': ['pub_date']}),
 		('Side image', {'fields': ['img']})
 	]

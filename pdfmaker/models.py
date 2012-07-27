@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from adminsortable.models import Sortable, SortableForeignKey
 from django.db.models.signals import post_save
 
+AGENCY_SIGNATURE_CHOICES = (
+    ('Sarah Richardson', 'Sarah Richardson'),
+    ('Eric Lee', 'Eric Lee'),
+)
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
@@ -31,8 +35,10 @@ class Sow(Sortable):
 		pass
 	project = models.CharField(max_length=255)
 	client = models.CharField(max_length=255)
+	client_contact = models.CharField(max_length=255,blank=True,null=True)
 	pub_date = models.DateTimeField('date published')
 	author = models.ForeignKey(UserProfile)
+	agency_signature =  models.CharField(max_length=255,choices=AGENCY_SIGNATURE_CHOICES,default='Sarah Richardson')
 	pdf = models.FileField(upload_to='pdf/sow',blank=True,null=True)
 	img = models.ForeignKey(Assets,blank=True,null=True)
 		
