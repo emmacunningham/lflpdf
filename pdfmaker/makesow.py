@@ -194,7 +194,7 @@ def projectInfo(sow,story):
 	story.append(phone)
 	
 def buildIndex(sow,story):
-	index = tab('//','INDEX',24)
+	index = tab('//','INDEX',22)
 	index.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat-Reg'),
 							('SIZE',(0,0),(1,0),12),
 							('TOPPADDING',(0,0),(1,0),20)]))
