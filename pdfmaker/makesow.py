@@ -170,28 +170,33 @@ def projectInfo(sow,story):
 	client = tab('CLIENT:',sow.client,83)
 	date = tab('DATE:',prettyDateTime(sow.pub_date),83)
 	author = tab('CONTACT:',authorname,83)
-	phone = tab('',authoremail,83)
+	email = tab('',authoremail,83)
 	project.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),12),
+							('TOPPADDING',(0,0),(1,0),5),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 	client.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),12),
+							('TOPPADDING',(0,0),(1,0),5),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
 	date.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),12),
+							('TOPPADDING',(0,0),(1,0),5),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 	author.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),12),
+							('TOPPADDING',(0,0),(1,0),5),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))
-	phone.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
+	email.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 							('SIZE',(0,0),(1,0),12),
+							('TOPPADDING',(0,0),(1,0),5),
 							('TEXTCOLOR',(0,0),(0,0),numgrey)]))							
 	story.append(statementofwork)
 	story.append(project)
 	story.append(client)
 	story.append(date)
 	story.append(author)
-	story.append(phone)
+	story.append(email)
 	
 def buildIndex(sow,story):
 	index = tab('//','INDEX',22)
@@ -207,6 +212,7 @@ def buildIndex(sow,story):
 		section_print = tab('{0}'.format(sectionid),'{0}'.format(sectiontitle),22)	
 		section_print.setStyle(TableStyle([('FACE',(0,0),(1,0),'Akkurat'),
 								('SIZE',(0,0),(1,0),12),
+								('TOPPADDING',(0,0),(1,0),5),
 								('TEXTCOLOR',(0,0),(0,0),numgrey)]))
 		story.append(section_print)
 		i = i + 1
