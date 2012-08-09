@@ -132,7 +132,6 @@ INSTALLED_APPS = (
 	'pdfmaker',
 	'south',
 	'adminsortable',
-	'tinymce'
 )
 
 # A sample logging configuration. The only tangible logging
