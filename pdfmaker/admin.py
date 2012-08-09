@@ -72,8 +72,7 @@ class AssetAdmin(admin.ModelAdmin):
 	
 class CommonMedia:
   js = (
-    'https://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js',
-    'http://some-antics.com/emma/appmedia/admin/js/editor.js',
+    'tiny_mce/tiny_mce.js', 'js/textareas.js'
   )
   css = {
     'all': ('http://some-antics.com/emma/appmedia/admin/css/editor.css',),
