@@ -1,4 +1,4 @@
 *.pyc
 media/pdf/sow/*
 media/pdf/timeline/*
-
+pdf/*.pyc
