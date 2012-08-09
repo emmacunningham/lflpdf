@@ -74,7 +74,7 @@ class CommonMedia:
   js = (
     'https://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js',
     'http://some-antics.com/emma/appmedia/admin/js/editor.js',
-  )
+    )
   css = {
     'all': ('http://some-antics.com/emma/appmedia/admin/css/editor.css',),
   }	
