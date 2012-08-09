@@ -12,9 +12,16 @@ class Migration(SchemaMigration):
         db.create_table('pdfmaker_userprofile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('phone', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('phone', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
         ))
         db.send_create_signal('pdfmaker', ['UserProfile'])
+
+        # Adding model 'Assets'
+        db.create_table('pdfmaker_assets', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('img', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+        ))
+        db.send_create_signal('pdfmaker', ['Assets'])
 
         # Adding model 'Sow'
         db.create_table('pdfmaker_sow', (
@@ -23,8 +30,9 @@ class Migration(SchemaMigration):
             ('project', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('client', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('pub_date', self.gf('django.db.models.fields.DateTimeField')()),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('phone', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['pdfmaker.UserProfile'])),
+            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['pdfmaker.UserProfile'])),
+            ('pdf', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('img', self.gf('django.db.models.fields.related.ForeignKey')(default=3, to=orm['pdfmaker.Assets'], null=True, blank=True)),
         ))
         db.send_create_signal('pdfmaker', ['Sow'])
 
@@ -38,15 +46,68 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('pdfmaker', ['Content'])
 
+        # Adding model 'Timeline'
+        db.create_table('pdfmaker_timeline', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('order', self.gf('django.db.models.fields.PositiveIntegerField')(default=1, db_index=True)),
+            ('project', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('client', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('pub_date', self.gf('django.db.models.fields.DateTimeField')()),
+            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['pdfmaker.UserProfile'])),
+            ('pdf', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+        ))
+        db.send_create_signal('pdfmaker', ['Timeline'])
+
+        # Adding model 'Milestones'
+        db.create_table('pdfmaker_milestones', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('order', self.gf('django.db.models.fields.PositiveIntegerField')(default=1, db_index=True)),
+            ('timeline', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['pdfmaker.Timeline'])),
+            ('description', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('milestone_date', self.gf('django.db.models.fields.DateField')()),
+        ))
+        db.send_create_signal('pdfmaker', ['Milestones'])
+
+        # Adding model 'TimelinePoint'
+        db.create_table('pdfmaker_timelinepoint', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('pointname', self.gf('django.db.models.fields.CharField')(max_length=255)),
+        ))
+        db.send_create_signal('pdfmaker', ['TimelinePoint'])
+
+        # Adding model 'TimelineCategory'
+        db.create_table('pdfmaker_timelinecategory', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('order', self.gf('django.db.models.fields.PositiveIntegerField')(default=1, db_index=True)),
+            ('timeline', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['pdfmaker.Timeline'])),
+            ('categoryname', self.gf('django.db.models.fields.CharField')(max_length=255)),
+        ))
+        db.send_create_signal('pdfmaker', ['TimelineCategory'])
+
     def backwards(self, orm):
         # Deleting model 'UserProfile'
         db.delete_table('pdfmaker_userprofile')
+
+        # Deleting model 'Assets'
+        db.delete_table('pdfmaker_assets')
 
         # Deleting model 'Sow'
         db.delete_table('pdfmaker_sow')
 
         # Deleting model 'Content'
         db.delete_table('pdfmaker_content')
+
+        # Deleting model 'Timeline'
+        db.delete_table('pdfmaker_timeline')
+
+        # Deleting model 'Milestones'
+        db.delete_table('pdfmaker_milestones')
+
+        # Deleting model 'TimelinePoint'
+        db.delete_table('pdfmaker_timelinepoint')
+
+        # Deleting model 'TimelineCategory'
+        db.delete_table('pdfmaker_timelinecategory')
 
     models = {
         'auth.group': {
@@ -85,6 +146,11 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'pdfmaker.assets': {
+            'Meta': {'object_name': 'Assets'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'img': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'})
+        },
         'pdfmaker.content': {
             'Meta': {'ordering': "['order']", 'object_name': 'Content'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -93,20 +159,51 @@ class Migration(SchemaMigration):
             'sectiontitle': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'sow': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['pdfmaker.Sow']"})
         },
+        'pdfmaker.milestones': {
+            'Meta': {'object_name': 'Milestones'},
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'milestone_date': ('django.db.models.fields.DateField', [], {}),
+            'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
+            'timeline': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['pdfmaker.Timeline']"})
+        },
         'pdfmaker.sow': {
             'Meta': {'object_name': 'Sow'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['pdfmaker.UserProfile']"}),
+            'client': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'img': ('django.db.models.fields.related.ForeignKey', [], {'default': '3', 'to': "orm['pdfmaker.Assets']", 'null': 'True', 'blank': 'True'}),
+            'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
+            'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'project': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'pub_date': ('django.db.models.fields.DateTimeField', [], {})
+        },
+        'pdfmaker.timeline': {
+            'Meta': {'object_name': 'Timeline'},
+            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['pdfmaker.UserProfile']"}),
             'client': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
-            'phone': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['pdfmaker.UserProfile']"}),
+            'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'project': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'pub_date': ('django.db.models.fields.DateTimeField', [], {})
+        },
+        'pdfmaker.timelinecategory': {
+            'Meta': {'ordering': "['order']", 'object_name': 'TimelineCategory'},
+            'categoryname': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
+            'timeline': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'to': "orm['pdfmaker.Timeline']"})
+        },
+        'pdfmaker.timelinepoint': {
+            'Meta': {'object_name': 'TimelinePoint'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'pointname': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
         'pdfmaker.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'phone': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         }
     }
