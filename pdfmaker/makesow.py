@@ -324,7 +324,7 @@ def formatsectioncontent(string,story):
 
 	def lidash(matchobj):
 		s = matchobj.group()
-		s = s.replace('<li>','-')
+		s = s.replace('<li>','- ')
 		s = s.replace('</li>','[br]')
 		return s
 
