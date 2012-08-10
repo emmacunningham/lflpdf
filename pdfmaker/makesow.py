@@ -328,7 +328,10 @@ def formatsectioncontent(string,story):
 		s = s.replace('</li>','[br]')
 		return s
 
-	string = re.sub('\[ul\].*?(<li>)(.*?)</li>.*?\[/ul\]',lidash,string)
+	#string = re.sub('\[ul\].*?(<li>)(.*?)</li>.*?\[/ul\]',lidash,string)
+	
+	string = string.replace('<li>','- ')
+	string = string.replace('</li>','[br]')	
 
 	string = string.replace('[ul]','[br]')
 	string = string.replace('[/ul]','')
@@ -393,7 +396,7 @@ def formatsectioncontent(string,story):
 		if indentmatch:
 			indentamt = indentmatch.group(1)
 			indenttext = indentmatch.group(2)
-			para = '<para leftIndent={} fontName="Akkurat" fontSize=9>{}</para>'.format(indentamt,indenttext)
+			para = '<para leftIndent={} fontName="Akkurat" fontSize=11>{}</para>'.format(indentamt,indenttext)
 			p = Paragraph(para,styles['Normal'])
 			story.append(p)			
 		else:
