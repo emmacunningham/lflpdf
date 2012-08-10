@@ -281,7 +281,7 @@ def formatsectioncontent(string,story):
 
 
 	def dumbp(matchobj):
-		p = re.search('margin-left: (.*?)px;',matchobj.group(1))
+		p = re.search('padding-left: (.*?)px;',matchobj.group(1))
 		if p:
 			s = '[indent {0}indent]'.format(p.group(1))
 			s += matchobj.group(2)
