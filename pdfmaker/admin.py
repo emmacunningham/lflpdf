@@ -71,12 +71,10 @@ class AssetAdmin(admin.ModelAdmin):
 	fieldsets = [('Upload an image',{'fields':['img']})]
 	
 class CommonMedia:
-  js = (
-    'tiny_mce/tiny_mce.js', 'js/textareas.js'
-  )
-  css = {
-    'all': ('http://some-antics.com/emma/appmedia/admin/css/editor.css',),
-  }	
+  js = [
+    'http://some-antics.com/emma/appmedia/tiny_mce/tiny_mce.js',
+    'http://some-antics.com/emma/appmedia/textareas.js',
+    ]
 
 class UserProfileInline(admin.TabularInline):
 	model = UserProfile
