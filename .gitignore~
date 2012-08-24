@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-*.pyc
-=======
 *.pyc
 media/pdf/sow/*
 media/pdf/timeline/*
->>>>>>> sow-feature-updates
+

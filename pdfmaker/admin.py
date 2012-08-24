@@ -7,6 +7,7 @@ import makesow
 import maketimeline
 from django.contrib.auth.models import User
 from django.core.files import File
+from django.conf import settings
 
 class ContentInline(SortableTabularInline):
 	model = Content
@@ -71,13 +72,10 @@ class AssetAdmin(admin.ModelAdmin):
 	fieldsets = [('Upload an image',{'fields':['img']})]
 	
 class CommonMedia:
-  js = (
-    'https://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js',
-    'http://some-antics.com/emma/appmedia/admin/js/editor.js',
-    )
-  css = {
-    'all': ('http://some-antics.com/emma/appmedia/admin/css/editor.css',),
-  }	
+  static = settings.STATIC_URL
+  js = (static+'admin/tiny_mce/tiny_mce.js', static+'admin/js/admin/textareas.js')
+    
+
 
 class UserProfileInline(admin.TabularInline):
 	model = UserProfile
