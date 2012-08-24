@@ -162,6 +162,17 @@ def tab(left,right,tabamt):
 	t._argW[0]=tabamt
 	return t
 	
+def partab(left,right,tabamt):
+	data = [[left,right]]
+	t = Table(data)
+	t.hAlign = 'LEFT'
+	t.setStyle(TableStyle([('LEFTPADDING',(0,0),(1,0),0)]))
+	t.setStyle(TableStyle([('TOPPADDING',(0,0),(1,0),0)]))
+	t.setStyle(TableStyle([('BOTTOMPADDING',(0,0),(1,0),0)]))
+	t.setStyle(TableStyle([('ALIGN',(0,0),(1,0),'LEFT')]))
+	t._argW[0]=tabamt
+	return t	
+	
 def projectInfo(sow,story):
 	authorname = '{0} {1}'.format(sow.author.user.first_name,sow.author.user.last_name)
 	authoremail = sow.author.user.email
@@ -272,7 +283,7 @@ def addZero(num):
 def formatsectioncontent(string,story):
 	string = string.replace('&nbsp;','')
 	string = string.replace('<br>','[br]')
-			
+
 	def dumbb(matchobj):
 		s = matchobj.group(1)
 		return s
@@ -372,12 +383,17 @@ def formatsectioncontent(string,story):
 		s += matchobj.group(1)
 		return s
 
-	string = re.sub('<li .*?>(.*?)</li>',dumbli,string)
 
+	
+	def dumbtable(matchobj):
+	  s = '[table]'+matchobj.group(1)+'[/table]'
+	  return s
+
+	string = re.sub('<table .*?>(.*?)</table>',dumbtable,string,flags=re.M|re.S)            
 	# strip away all html
 	#string = html2text.html2text(string)
 
-	# convert non-html tags to reportlab-friendly inline tags
+	# convert pseudo-html tags to reportlab-friendly inline tags
 	string = string.replace('[br]','<br/>')
 	string = string.replace('[b]','<b>')
 	string = string.replace('[/b]','</b>')
@@ -391,20 +407,39 @@ def formatsectioncontent(string,story):
 	bracketre = re.compile('(\[indent .*?indent\].*?\[/indent\])',re.S)
 	parsedbracketlist = bracketre.split(string)
 	story.append(Spacer(width=612-mainTextMargin,height=10))
-	for text in parsedbracketlist:
+	styles = getSampleStyleSheet()
+	styles.add(ParagraphStyle(name='Akkuratfonts11',fontName='Akkurat',fontSize=11))
+	for text in parsedbracketlist:	  
 		indentmatch = re.search('\[indent (.*?)indent\](.*?)\[/indent\]',text,re.S)
+		tablematch = re.search('\[table\]',text,re.S|re.M)		  					
 		if indentmatch:
 			indentamt = indentmatch.group(1)
 			indenttext = indentmatch.group(2)
-			para = '<para leftIndent={} fontName="Akkurat" fontSize=11>{}</para>'.format(indentamt,indenttext)
+			para = '<para leftIndent={0} fontName="Akkurat" fontSize=11>{1}</para>'.format(indentamt,indenttext)
 			p = Paragraph(para,styles['Normal'])
-			story.append(p)			
-		else:
-			text = text.replace('[/indent]','')
-			styles = getSampleStyleSheet()
-			styles.add(ParagraphStyle(name='Akkuratfonts',fontName='Akkurat',fontSize=11))
-			p = Paragraph(text,styles['Akkuratfonts'])
 			story.append(p)
+		elif tablematch:
+		  tablere = re.compile('(\[table\].*?\[/table\])',re.S)
+		  parsedtablelist = tablere.split(text)
+		  for ttext in parsedtablelist:
+		    if re.search(tablere,ttext):
+		      rowre = re.compile('<tr>.*?<td>(.*?)</td>.*?<td>(.*?)</td>.*?</tr>',re.S|re.M)
+		      rowsearch = re.search(rowre,ttext)
+		      #parsedrowlist = rowre.split(ttext)
+		      for match in rowre.finditer(ttext):
+		        col1 = Paragraph(match.group(1),styles['Akkuratfonts11'])
+		        col2 = Paragraph(match.group(2),styles['Akkuratfonts11'])
+		        row = partab(col1,col2,120)
+
+		        story.append(row)
+		    else:
+		      nontable = Paragraph(ttext,styles['Akkuratfonts11'])
+		      story.append(nontable)
+		else:
+		  text = text.replace('[/indent]','')
+		  p = Paragraph(text,styles['Akkuratfonts11'])
+		  story.append(p)
+			
 
 def signatures(sow,story):
 	story.append(Spacer(width=612-mainTextMargin,height=100))
