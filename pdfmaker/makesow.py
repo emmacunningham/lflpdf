@@ -388,8 +388,9 @@ def formatsectioncontent(string,story):
 	def dumbtable(matchobj):
 	  s = '[table]'+matchobj.group(1)+'[/table]'
 	  return s
+	
+	string = re.sub(re.compile('<table .*?>(.*?)</table>',re.M|re.S), dumbtable, string)
 
-	string = re.sub('<table .*?>(.*?)</table>',dumbtable,string,flags=re.M|re.S)            
 	# strip away all html
 	#string = html2text.html2text(string)
 
